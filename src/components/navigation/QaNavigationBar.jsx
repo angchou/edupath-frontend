@@ -1,12 +1,14 @@
 import { NavLink, Link } from "react-router-dom";
 import { User } from "lucide-react";
 
-export default function LearnerNavigationBar() {
+export default function QaNavigationBar() {
   const items = [
-    { id: "course", label: "Khóa học", path: "/learner/course" },
-    { id: "people", label: "Mọi người", path: "/learner/people" },
-    { id: "chat", label: "Tin nhắn", path: "/learner/chat" },
-    { id: "support", label: "Hỗ trợ", path: "/learner/support" },
+    { id: "course", label: "Quản lý Khóa học", path: "/qa/course" },
+    {
+      id: "mentor_profile",
+      label: "Quản lý hồ sơ đăng ký",
+      path: "/qa/mentor_profile",
+    },
   ];
 
   return (
@@ -35,7 +37,7 @@ export default function LearnerNavigationBar() {
 
       <div className="flex items-center gap-4">
         <div className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center cursor-pointer hover:bg-gray-300 transition">
-          <Link to={"/learner/profile"}>
+          <Link to={"/admin/employee"}>
             <User size={20} />
           </Link>
         </div>

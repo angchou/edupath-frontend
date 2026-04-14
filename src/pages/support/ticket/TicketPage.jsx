@@ -75,6 +75,7 @@ export default function TicketPage() {
   const [selectedTicket, setSelectedTicket] = useState(null);
   const [openModal, setOpenModal] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
+  const [priority, setPriority] = useState("");
 
   const filteredEmployees = tickets.filter((ticket) => {
     const keyword = searchTerm.toLowerCase();
@@ -239,47 +240,52 @@ export default function TicketPage() {
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-2 mt-6">
-              <form className="flex flex-col gap-2">
-                <input
-                  type="text"
-                  placeholder="Nội dung phản hồi"
-                  name="chucVu"
-                  className="w-full h-full border rounded-lg p-2 outline-none focus:border-blue-500"
-                  required
-                />
-                <button
-                  type="submit"
-                  className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition"
-                >
-                  Xử lý
-                </button>
-              </form>
+            <div className="flex flex-col gap-3 mt-6">
+              <select
+                value={priority}
+                onChange={(e) => setPriority(e.target.value)}
+                className="w-full border-b-1 p-2 outline-none focus:border-blue-500"
+              >
+                <option value={0} disabled>
+                  Độ ưu tiên
+                </option>
+                <option value={3}>Thấp</option>
+                <option value={4}>Trung bình</option>
+                <option value={5}>Cao</option>
+                <option value={6}>Quan trọng</option>
+              </select>
 
-              <form className="flex flex-col gap-2">
-                <select className="w-full border rounded-lg p-2 outline-none focus:border-blue-500">
-                  <option value={0} disabled>
-                    Ưu tiên
-                  </option>
-                  <option value={3}>Thấp</option>
-                  <option value={4}>trung bình</option>
-                  <option value={5}>Cao</option>
-                  <option value={6}>Quan trọng</option>
-                </select>
-                <input
-                  row={2}
-                  type="text"
-                  placeholder="Lý do chuyển tiếp"
-                  className="w-full border rounded-lg p-2 outline-none focus:border-blue-500 resize-none"
-                  required
-                />
-                <button
-                  type="submit"
-                  className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition"
-                >
-                  Chuyển tiếp
-                </button>
-              </form>
+              <div className="grid grid-cols-2 gap-2">
+                <form className="flex flex-col gap-2">
+                  <input
+                    type="text"
+                    placeholder="Nội dung phản hồi"
+                    className="w-full border rounded-lg p-2 outline-none focus:border-blue-500"
+                    required
+                  />
+                  <button
+                    type="submit"
+                    className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition"
+                  >
+                    Xử lý
+                  </button>
+                </form>
+
+                <form className="flex flex-col gap-2">
+                  <input
+                    type="text"
+                    placeholder="Lý do chuyển tiếp"
+                    className="w-full border rounded-lg p-2 outline-none focus:border-blue-500"
+                    required
+                  />
+                  <button
+                    type="submit"
+                    className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition"
+                  >
+                    Chuyển tiếp
+                  </button>
+                </form>
+              </div>
             </div>
           </div>
         </div>
