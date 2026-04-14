@@ -21,7 +21,21 @@ export const loginService = async (form) => {
   const decode = jwtDecode(localStorage.getItem("token"));
   const roles = decode.roles;
 
-  // console.log(localStorage.getItem("token"));
-
   return roles;
+};
+
+export const registerService = async (form) => {
+  const res = await fetch(`${BASE_URL}/auth/register`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(form),
+  });
+
+  if (!res.ok) {
+    const errorData = await res.json();
+    throw new Error(errorData.message || "Register failed!");
+  }
+  return true;
 };

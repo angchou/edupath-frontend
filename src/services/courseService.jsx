@@ -1,6 +1,6 @@
 import { BASE_URL } from "../utils/apiConfig";
 
-export const getAllCourses = async () => {
+export const getNormalCourses = async () => {
   try {
     const token = localStorage.getItem("token");
 
@@ -21,8 +21,10 @@ export const getAllCourses = async () => {
       title: c.courseName,
       description: c.courseDescription,
       students: c.courseSize,
+      price: c.coursePrice,
       mentor: c.mentorSummaryResponse?.mentorUserName || "Unknown",
-      image: "https://images.unsplash.com/photo-1515879218367-8466d910aaa4",
+      image:
+        "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2161700/header.jpg?t=1764776430",
     }));
   } catch (err) {
     console.error(err);

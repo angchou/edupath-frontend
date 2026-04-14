@@ -1,11 +1,11 @@
-import Navbar from "../components/Navbar/LearnerNavBar";
 import { Outlet } from "react-router-dom";
+import LearnerNavigationBar from "../components/navigation/LearnerNavigationBar";
 
 export default function LearnerLayout() {
   return (
-    <>
-      <Navbar />
+    <div className="items-center justify-center">
+      <LearnerNavigationBar />
       <Outlet />
-    </>
+    </div>
   );
 }
