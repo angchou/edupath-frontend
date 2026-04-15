@@ -6,6 +6,7 @@ import AdminRoutes from "./routes/AdminRoutes";
 import FinanceRoutes from "./routes/FinanceRoutes";
 import SupportRoutes from "./routes/SupportRoutes";
 import QaRoutes from "./routes/QaRoutes";
+import MentorRoutes from "./routes/MentorRoutes";
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
         <Route path="/finance/*" element={<FinanceRoutes />} />
         <Route path="/support/*" element={<SupportRoutes />} />
         <Route path="/qa/*" element={<QaRoutes />} />
+        <Route path="/mentor/*" element={<MentorRoutes />} />
       </Routes>
     </BrowserRouter>
   );

@@ -1,10 +1,8 @@
-import { Cog, Landmark } from "lucide-react";
+import { BookOpenText, BookAlert, BookCheck, Library } from "lucide-react";
+import { FaBookReader } from "react-icons/fa";
 import { NavLink } from "react-router-dom";
-import { MdDiscount } from "react-icons/md";
-import { FaUserCog, FaCoins } from "react-icons/fa";
-import { MdAttachMoney } from "react-icons/md";
 
-export default function SystemOperationSideBar() {
+export default function MentorCourseSideBar() {
   const baseStyle =
     "flex items-center gap-3 p-3 rounded-lg mt-2 cursor-pointer transition-all";
 
@@ -12,14 +10,14 @@ export default function SystemOperationSideBar() {
     <div className="w-full md:w-64 bg-white border-b md:border-b-0 md:border-r border-gray-200">
       <div className="p-6 flex items-center gap-2">
         <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-          <Cog className="text-white w-5 h-5" />
+          <FaBookReader className="text-white w-5 h-5" />
         </div>
-        <span className="font-bold text-xl text-gray-800">Hệ thống</span>
+        <span className="font-bold text-xl text-gray-800">Khóa học</span>
       </div>
 
       <nav className="px-4 pb-4 md:mt-6">
         <NavLink
-          to="/finance/cost/promotion"
+          to="/mentor/course/create"
           className={({ isActive }) =>
             `${baseStyle} ${
               isActive
@@ -28,12 +26,12 @@ export default function SystemOperationSideBar() {
             }`
           }
         >
-          <MdDiscount size={20} />
-          <span className="font-medium">Chi phí khuyến mãi</span>
+          <BookAlert size={20} />
+          <span className="font-medium">Tạo khóa học</span>
         </NavLink>
 
         <NavLink
-          to="/finance/cost/system"
+          to="/mentor/course/all"
           className={({ isActive }) =>
             `${baseStyle} ${
               isActive
@@ -42,12 +40,12 @@ export default function SystemOperationSideBar() {
             }`
           }
         >
-          <FaUserCog size={20} />
-          <span className="font-medium">Vận hành hệ thống</span>
+          <BookOpenText size={20} />
+          <span className="font-medium">Khóa học</span>
         </NavLink>
 
         <NavLink
-          to="/finance/cost/salary"
+          to="/mentor/course/my_course"
           className={({ isActive }) =>
             `${baseStyle} ${
               isActive
@@ -56,12 +54,12 @@ export default function SystemOperationSideBar() {
             }`
           }
         >
-          <FaCoins size={20} />
-          <span className="font-medium">Chi phí lương</span>
+          <BookAlert size={20} />
+          <span className="font-medium">Khóa học của tôi</span>
         </NavLink>
 
         <NavLink
-          to="/finance/cost/budget"
+          to="/mentor/course/rating"
           className={({ isActive }) =>
             `${baseStyle} ${
               isActive
@@ -70,21 +68,8 @@ export default function SystemOperationSideBar() {
             }`
           }
         >
-          <Landmark size={20} />
-          <span className="font-medium">Theo dõi ngân sách</span>
-        </NavLink>
-        <NavLink
-          to="/finance/cost/payroll"
-          className={({ isActive }) =>
-            `${baseStyle} ${
-              isActive
-                ? "bg-blue-50 text-blue-600"
-                : "text-gray-600 hover:bg-gray-50"
-            }`
-          }
-        >
-          <MdAttachMoney size={20} />
-          <span className="font-medium">Thanh toán lương</span>
+          <BookAlert size={20} />
+          <span className="font-medium">Đánh giá khóa học</span>
         </NavLink>
       </nav>
     </div>

@@ -1,234 +1,185 @@
-// src/pages/CheckoutPage.jsx
-import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
+import { useState } from "react";
 
-// Danh sách voucher hợp lệ
-const VALID_VOUCHERS = {
-  GIAM50K: 50000,
-  GIAM100K: 100000,
-  REACTVIP: 200000,
-};
-
-export default function CheckoutPage() {
-  const navigate = useNavigate();
-
-  const [voucher, setVoucher] = useState("");
-  const [agreed, setAgreed] = useState(false);
-  const [timeLeft, setTimeLeft] = useState(10);
-
-  // SỬA: Dùng 1 object null thay vì mảng []
-  const [appliedVoucher, setAppliedVoucher] = useState(null);
-  const [inputStatus, setInputStatus] = useState("idle");
+export default function PaycheckPage() {
+  const { khoaHocID } = useParams();
+  const [method, setMethod] = useState("momo");
+  const [voucherCode, setVoucherCode] = useState("");
+  const [voucher, setVoucher] = useState(null);
+  const [error, setError] = useState("");
 
   const course = {
-    title: "React nâng cao",
-    description: "Học React từ cơ bản đến nâng cao",
-    price: 500000,
+    khoaHocID: "KH0002",
+    tenKhoaHoc: "Du học cùng six seven",
+    giaBan: 1500000,
+    hinhAnh:
+      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT3PoprumCX_HbXTfKRwKHg6M9iev5dapLsbg&s",
+    hoTen: "Châu Gia An",
+    nguoiHuongDanID: "U0001",
   };
 
-  // Countdown timer
-  useEffect(() => {
-    if (timeLeft <= 0) {
-      alert("Đã hết thời gian thanh toán. Vui lòng đặt hàng lại!");
-      navigate("/learner/course"); // Thay bằng đường dẫn bạn muốn quay lại
-      return;
-    }
-    const timer = setInterval(() => {
-      setTimeLeft((prev) => prev - 1);
-    }, 1000);
-    return () => clearInterval(timer);
-  }, [timeLeft, navigate]);
+  const handleApplyVoucher = async (e) => {
+    e.preventDefault();
 
-  const formatTime = (sec) => {
-    const m = Math.floor(sec / 60);
-    const s = sec % 60;
-    return `${m.toString().padStart(2, "0")}:${s.toString().padStart(2, "0")}`;
-  };
+    try {
+      if (voucherCode === "GIAM50") {
+        const fakeVoucher = {
+          discountType: "PERCENT",
+          discountValue: 50,
+        };
 
-  // Xử lý khi gõ vào ô input
-  const handleVoucherChange = (e) => {
-    setVoucher(e.target.value.toUpperCase());
-    setInputStatus("idle");
-  };
-
-  // Xử lý khi bấm nút Áp dụng
-  const handleVoucherApply = () => {
-    const code = voucher.trim();
-    if (!code) return;
-
-    // Kiểm tra xem mã có hợp lệ không
-    if (VALID_VOUCHERS[code]) {
-      // Nếu nhập lại đúng cái đang dùng
-      if (appliedVoucher?.code === code) {
-        alert("Bạn đang sử dụng mã này rồi!");
-        setInputStatus("error");
-        return;
+        setVoucher(fakeVoucher);
+        setError("");
+      } else {
+        throw new Error("Voucher không hợp lệ");
       }
-
-      // SỬA: Cập nhật trực tiếp 1 voucher (ghi đè nếu có mã cũ)
-      setAppliedVoucher({ code, discount: VALID_VOUCHERS[code] });
-      setInputStatus("success");
-      setVoucher("");
-    } else {
-      // Sai mã voucher
-      setInputStatus("error");
+    } catch (err) {
+      setVoucher(null);
+      setError(err.message);
+      setVoucherCode("");
     }
   };
 
-  // SỬA: Hàm gỡ voucher chỉ cần set lại bằng null
-  const removeVoucher = () => {
-    setAppliedVoucher(null);
-    setInputStatus("idle"); // Reset màu viền input
-  };
-
-  // SỬA: Lấy discount từ 1 voucher duy nhất
-  const totalDiscount = appliedVoucher ? appliedVoucher.discount : 0;
-  const finalPrice = Math.max(0, course.price - totalDiscount);
-
-  const handlePay = () => {
-    if (!agreed) {
-      alert("Bạn phải đồng ý thanh toán trước!");
-      return;
+  const calculateDiscount = () => {
+    if (!voucher) return 0;
+    if (voucher.discountType === "PERCENT") {
+      let discount = course.giaBan * (voucher.discountValue / 100);
+      if (voucher.maxDiscount) {
+        discount = Math.min(discount, voucher.maxDiscount);
+      }
+      return discount;
     }
-    alert(`Thanh toán thành công số tiền: ${finalPrice.toLocaleString()} VND`);
+    if (voucher.discountType === "FIXED") {
+      return voucher.discountValue;
+    }
+    return 0;
   };
 
-  // Logic màu viền cho input
-  let inputBorderClass =
-    "border-gray-300 focus:border-blue-500 focus:ring-blue-500";
-  if (inputStatus === "success")
-    inputBorderClass = "border-green-500 ring-1 ring-green-500";
-  if (inputStatus === "error")
-    inputBorderClass = "border-red-500 ring-1 ring-red-500";
+  const finalPrice = course.giaBan - calculateDiscount();
 
   return (
-    <div className="max-w-3xl mx-auto p-6 bg-white rounded-xl shadow-md space-y-6 mt-10">
-      {/* Thông tin khóa học */}
-      <div className="border-b pb-4 border-blue-500">
-        <h2 className="text-2xl font-bold">{course.title}</h2>
-        <p className="text-gray-600">{course.description}</p>
-        <p className="mt-2 text-lg font-semibold">
-          Giá: {course.price.toLocaleString()} VND
-        </p>
-      </div>
+    <div className="p-6 bg-gray-50 min-h-screen">
+      <div className="max-w-[75vw] mx-auto grid md:grid-cols-3 gap-6">
+        <div className="bg-white my-auto p-6 rounded-xl shadow col-span-2">
+          <h2 className="text-xl font-semibold mb-4">Thanh toán khóa học</h2>
 
-      {/* Phương thức thanh toán */}
-      <div className="border-b pb-4 border-blue-500">
-        <h3 className="text-lg font-semibold mb-2">
-          Chọn phương thức thanh toán
-        </h3>
-        <div className="flex items-center gap-3">
-          <input type="radio" id="bank" name="payment" checked readOnly />
-          <label htmlFor="bank">Quét mã ngân hàng</label>
-        </div>
-      </div>
+          <div className="flex gap-4">
+            <img
+              src={course.hinhAnh}
+              className="h-40 object-cover rounded-lg"
+            />
+            <div>
+              <h3 className="font-semibold text-xl">
+                {course.tenKhoaHoc} - {course.khoaHocID}
+              </h3>
+              <h2 className="">
+                {course.hoTen} - {course.khoaHocID}
+              </h2>
+              <div className="border-b-1 w-full"></div>
+              <p className="text-[#cf345a] font-bold mt-2">
+                Giá gốc: {course.giaBan.toLocaleString()}đ
+              </p>
+              <p className="text-green-600 font-semibold">
+                - {calculateDiscount().toLocaleString()}đ
+              </p>
+              <p className="text-blue-600 text-lg font-bold mt-2">
+                Số tiền cần trả: {finalPrice.toLocaleString()}đ
+              </p>
+            </div>
+          </div>
 
-      {/* Voucher */}
-      <div className="border-b pb-4 border-blue-500">
-        <h3 className="text-lg font-semibold mb-2">Nhập voucher</h3>
-        <div className="flex gap-2 mb-2">
-          <input
-            type="text"
-            value={voucher}
-            onChange={handleVoucherChange}
-            placeholder="Nhập mã (VD: GIAM50K, GIAM100K)"
-            className={`border p-2 flex-1 rounded outline-none transition-colors ${inputBorderClass}`}
-          />
-          <button
-            onClick={handleVoucherApply}
-            className="bg-blue-500 hover:bg-blue-600 text-white px-4 rounded transition-colors"
-          >
-            Áp dụng
-          </button>
-        </div>
+          <div className="max-w-[50%] mt-10">
+            <h1 className="font-semibold mb-4">Nhập mã voucher</h1>
+            <form className="flex flex-grow" onSubmit={handleApplyVoucher}>
+              <input
+                type="text"
+                value={voucherCode}
+                onChange={(e) => setVoucherCode(e.target.value)}
+                placeholder="Nhập mã Voucher"
+                disabled={voucher !== null}
+                className="basis-128 p-3 outline-none bg-gray-100 disabled:bg-gray-200"
+              />
+              <button
+                type="submit"
+                disabled={voucher !== null}
+                className="basis-64 p-2 bg-blue-500 hover:bg-blue-600 transition text-white font-semibold disabled:bg-gray-400"
+              >
+                Xác nhận
+              </button>
+            </form>
+            {voucher && (
+              <div className="mt-3 flex max-w-[100%] items-center justify-between bg-green-50 border border-green-300 rounded-lg p-3">
+                <div>
+                  <p className="text-green-700 font-semibold">
+                    Đã áp dụng: {voucherCode}
+                  </p>
+                  <p className="text-sm text-gray-600">
+                    Giảm {calculateDiscount().toLocaleString()}đ
+                  </p>
+                </div>
 
-        {/* Báo lỗi nếu sai */}
-        {inputStatus === "error" && (
-          <p className="text-red-500 text-sm mb-2">
-            Mã voucher không hợp lệ hoặc đang được sử dụng.
-          </p>
-        )}
-
-        {/* SỬA: Hiển thị 1 voucher đang áp dụng (nếu có) */}
-        {appliedVoucher && (
-          <div className="mt-3">
-            <p className="text-sm text-gray-600 mb-2">Voucher đang áp dụng:</p>
-            <div className="flex flex-wrap gap-2">
-              <div className="bg-green-100 border border-green-300 text-green-800 px-3 py-1 rounded-full text-sm font-medium flex items-center gap-2">
-                <span
-                  title={`Giảm ${appliedVoucher.discount.toLocaleString()}đ`}
-                >
-                  {appliedVoucher.code}
-                </span>
                 <button
-                  onClick={removeVoucher}
-                  className="text-green-900 hover:text-red-500 font-bold ml-1 cursor-pointer"
+                  type="button"
+                  onClick={() => {
+                    setVoucher(null);
+                    setVoucherCode("");
+                  }}
+                  className="text-red-500 mr-5 font-bold hover:scale-110 transition"
                 >
-                  ×
+                  Xóa
                 </button>
+              </div>
+            )}
+            {error && !voucher && (
+              <p className="ml-3 text-red-500 text-sm mt-2">{error}</p>
+            )}
+
+            <div className="mt-6">
+              <h3 className="font-semibold mb-3">
+                Chọn phương thức thanh toán
+              </h3>
+
+              <div className="flex flex-col">
+                <label className="flex items-center gap-3 p-3 cursor-pointer">
+                  <input
+                    type="radio"
+                    name="payment"
+                    checked={method === "momo"}
+                    onChange={() => setMethod("momo")}
+                  />
+                  <span>Momo</span>
+                </label>
+                <label className="flex items-center gap-3 p-3 cursor-pointer">
+                  <input
+                    type="radio"
+                    name="payment"
+                    checked={method === "bank"}
+                    onChange={() => setMethod("bank")}
+                  />
+                  <span>Chuyển khoản ngân hàng</span>
+                </label>
               </div>
             </div>
           </div>
-        )}
-      </div>
+        </div>
 
-      {/* Số tiền phải trả */}
-      <div className="border-b pb-4 border-blue-500">
-        <h3 className="text-lg font-semibold mb-2">Tổng kết đơn hàng</h3>
-        <div className="space-y-1">
-          <p className="text-gray-600 flex justify-between">
-            <span>Giá gốc:</span>
-            <span>{course.price.toLocaleString()} VND</span>
+        <div className="bg-white p-6 rounded-xl shadow flex flex-col items-center justify-center">
+          <h3 className="font-semibold mb-4">Quét QR để thanh toán</h3>
+
+          <img
+            src={
+              method === "momo"
+                ? "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=momo-payment"
+                : "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=bank-transfer"
+            }
+            className="w-52 h-52"
+          />
+
+          <p className="text-sm text-gray-500 mt-4 text-center">
+            Nội dung: userID_{khoaHocID}
           </p>
-
-          {/* Hiển thị số tiền được giảm nếu có voucher */}
-          {totalDiscount > 0 && (
-            <p className="text-green-600 flex justify-between font-medium">
-              <span>Được giảm ({appliedVoucher.code}):</span>
-              <span>- {totalDiscount.toLocaleString()} VND</span>
-            </p>
-          )}
-
-          <div className="pt-2 mt-2 border-t border-blue-500 flex justify-between items-center">
-            <span className="font-bold text-lg">Số tiền phải trả:</span>
-            <span className="text-2xl font-bold text-red-600">
-              {finalPrice.toLocaleString()} VND
-            </span>
-          </div>
         </div>
       </div>
-
-      {/* Countdown */}
-      <div className="border-b pb-4 border-blue-500">
-        <h3 className="text-lg font-semibold mb-2">Thời gian còn lại</h3>
-        <p className="text-red-500 text-xl font-bold">{formatTime(timeLeft)}</p>
-      </div>
-
-      {/* Đồng ý thanh toán */}
-      <div className="flex items-center gap-2">
-        <input
-          type="checkbox"
-          id="agree"
-          checked={agreed}
-          onChange={(e) => setAgreed(e.target.checked)}
-          className="w-4 h-4 cursor-pointer"
-        />
-        <label htmlFor="agree" className="cursor-pointer select-none">
-          Tôi đồng ý thực hiện thanh toán
-        </label>
-      </div>
-
-      <button
-        onClick={handlePay}
-        className={`w-full py-3 rounded transition-colors ${
-          agreed
-            ? "bg-blue-500 hover:bg-blue-600"
-            : "bg-gray-400 cursor-not-allowed"
-        } text-white font-semibold text-lg mt-4`}
-        disabled={!agreed}
-      >
-        Tiến hành thanh toán
-      </button>
     </div>
   );
 }

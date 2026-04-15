@@ -1,4 +1,4 @@
-import { BookOpenText, BookAlert, BookCheck, Library } from "lucide-react";
+import { BookOpenText, BookUser, NotebookPen } from "lucide-react";
 import { FaBookReader } from "react-icons/fa";
 import { NavLink } from "react-router-dom";
 
@@ -40,7 +40,7 @@ export default function LearnerCourseSideBar() {
             }`
           }
         >
-          <BookAlert size={20} />
+          <BookUser size={20} />
           <span className="font-medium">Khóa học của tôi</span>
         </NavLink>
 
@@ -54,22 +54,8 @@ export default function LearnerCourseSideBar() {
             }`
           }
         >
-          <BookAlert size={20} />
+          <NotebookPen size={20} />
           <span className="font-medium">Đánh giá khóa học</span>
-        </NavLink>
-
-        <NavLink
-          to="/learner/course/roadmap"
-          className={({ isActive }) =>
-            `${baseStyle} ${
-              isActive
-                ? "bg-blue-50 text-blue-600"
-                : "text-gray-600 hover:bg-gray-50"
-            }`
-          }
-        >
-          <BookAlert size={20} />
-          <span className="font-medium">Lộ trình</span>
         </NavLink>
       </nav>
     </div>

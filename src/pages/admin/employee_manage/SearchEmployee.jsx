@@ -224,6 +224,13 @@ export default function SearchEmployee() {
                   {selectedEmployee?.ngayTao}
                 </div>
               </div>
+                <button
+                  type="submit"
+                  className="w-full bg-blue-500 hover:bg-blue-600 text-white py-2 rounded-lg transition mt-5"
+                  onClick={() => setOpenModal(false)}
+                >
+                  Thoát
+                </button>
             </div>
           </div>
         </div>

@@ -1,11 +1,7 @@
-import { MdPayments } from "react-icons/md";
-import { RiRefundFill } from "react-icons/ri";
-import { History, TicketCheck, Ticket } from "lucide-react";
-import { FaHandsHelping } from "react-icons/fa";
-
+import { Locate, Map, MapMinus, MapPlus } from "lucide-react";
 import { NavLink } from "react-router-dom";
 
-export default function TicketSideBar() {
+export default function LearnerRoadmapSideBar() {
   const baseStyle =
     "flex items-center gap-3 p-3 rounded-lg mt-2 cursor-pointer transition-all";
 
@@ -13,14 +9,14 @@ export default function TicketSideBar() {
     <div className="w-full md:w-64 bg-white border-b md:border-b-0 md:border-r border-gray-200">
       <div className="p-6 flex items-center gap-2">
         <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-          <FaHandsHelping className="text-white w-5 h-5" />
+          <Locate className="text-white w-5 h-5" />
         </div>
-        <span className="font-bold text-xl text-gray-800">Yêu cầu hỗ trợ</span>
+        <span className="font-bold text-xl text-gray-800">Lộ trình</span>
       </div>
 
       <nav className="px-4 pb-4 md:mt-6">
         <NavLink
-          to="/support/ticket/process"
+          to="/learner/roadmap/all"
           className={({ isActive }) =>
             `${baseStyle} ${
               isActive
@@ -29,12 +25,12 @@ export default function TicketSideBar() {
             }`
           }
         >
-          <TicketCheck size={20} />
-          <span className="font-medium">Xử lý ticket</span>
+          <Map size={20} />
+          <span className="font-medium">Lộ trình của tôi</span>
         </NavLink>
 
         <NavLink
-          to="/support/ticket/manage"
+          to="/learner/roadmap/edit"
           className={({ isActive }) =>
             `${baseStyle} ${
               isActive
@@ -43,8 +39,22 @@ export default function TicketSideBar() {
             }`
           }
         >
-          <Ticket size={20} />
-          <span className="font-medium">Quản lý ticket</span>
+          <MapPlus size={20} />
+          <span className="font-medium">Chỉnh sửa lộ trình</span>
+        </NavLink>
+
+        <NavLink
+          to="/learner/roadmap/del"
+          className={({ isActive }) =>
+            `${baseStyle} ${
+              isActive
+                ? "bg-blue-50 text-blue-600"
+                : "text-gray-600 hover:bg-gray-50"
+            }`
+          }
+        >
+          <MapMinus size={20} />
+          <span className="font-medium">Xóa lộ trình</span>
         </NavLink>
       </nav>
     </div>

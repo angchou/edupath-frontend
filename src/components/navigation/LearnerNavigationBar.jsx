@@ -4,8 +4,8 @@ import { User } from "lucide-react";
 export default function LearnerNavigationBar() {
   const items = [
     { id: "course", label: "Khóa học", path: "/learner/course" },
+    { id: "roadmap", label: "Lộ trình", path: "/learner/roadmap" },
     { id: "people", label: "Mọi người", path: "/learner/people" },
-    { id: "chat", label: "Tin nhắn", path: "/learner/chat" },
     { id: "support", label: "Hỗ trợ", path: "/learner/support" },
   ];
 
