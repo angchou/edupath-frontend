@@ -41,33 +41,38 @@ export default function VideoBlock({ block, onSave, onClose }) {
         </div>
       )}
 
-      <div className="flex gap-2 w-full">
-        <input
-          type="file"
-          accept="video/*"
-          onChange={handleChange}
-          ref={fileInputRef}
-          className="hidden"
-        />
+      <div className="flex justify-between w-full">
+        <div>
+          <input
+            type="file"
+            accept="video/*"
+            onChange={handleChange}
+            ref={fileInputRef}
+            className="hidden"
+          />
 
-        <button
-          onClick={() => fileInputRef.current.click()}
-          className="mt-4 px-12 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-md font-bold transition"
-        >
-          Chọn video
-        </button>
-        <button
-          onClick={handleSave}
-          className="mt-4 px-12 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-md font-bold transition"
-        >
-          Lưu
-        </button>
-        <button
-          onClick={() => onClose()}
-          className="mt-4 px-12 py-2 bg-gray-400 hover:bg-gray-500 text-white rounded-md font-bold transition"
-        >
-          Hủy
-        </button>
+          <button
+            onClick={() => fileInputRef.current.click()}
+            className="mt-4 px-12 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-md font-bold transition"
+          >
+            Chọn video
+          </button>
+        </div>
+
+        <div className="flex gap-2">
+          <button
+            onClick={handleSave}
+            className="mt-4 px-12 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-md font-bold transition"
+          >
+            Lưu
+          </button>
+          <button
+            onClick={() => onClose()}
+            className="mt-4 px-12 py-2 bg-gray-400 hover:bg-gray-500 text-white rounded-md font-bold transition"
+          >
+            Hủy
+          </button>
+        </div>
       </div>
     </div>
   );

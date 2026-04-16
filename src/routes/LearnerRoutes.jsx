@@ -13,7 +13,7 @@ import PaycheckPage from "../pages/paycheck/PaycheckPage";
 
 import RoadmapPage from "../pages/learner/roadmap/RoadmapPage";
 import EditRoadmapPage from "../pages/learner/roadmap/EditRoadmapPage";
-import DeleteRoadmapPage from "../pages/learner/roadmap/DeleteRoadmapPage";
+import AllRoadmapPage from "../pages/learner/roadmap/AllRoadmapPage";
 
 import PeoplePage from "../pages/learner/people/PeoplePage";
 import MessagePage from "../pages/learner/people/MessagePage";
@@ -34,9 +34,9 @@ export default function LearnerRoutes() {
           <Route path="roadmap" element={<RoadmapPage />} />
         </Route>
         <Route path="roadmap" element={<LearnerRoadmapLayout />}>
-          <Route path="all" element={<RoadmapPage />} />
+          <Route path="all" element={<AllRoadmapPage />} />
+          <Route path="my_road" element={<RoadmapPage />} />
           <Route path="edit" element={<EditRoadmapPage />} />
-          <Route path="del" element={<DeleteRoadmapPage />} />
         </Route>
         <Route path="people" element={<LearnerPeopleLayout />}>
           <Route path="all" element={<PeoplePage />} />

@@ -15,7 +15,7 @@ import EditCousePage from "../pages/mentor/course/EditCoursePage";
 
 import RoadmapPage from "../pages/learner/roadmap/RoadmapPage";
 import EditRoadmapPage from "../pages/learner/roadmap/EditRoadmapPage";
-import DeleteRoadmapPage from "../pages/learner/roadmap/DeleteRoadmapPage";
+import AllRoadmapPage from "../pages/learner/roadmap/AllRoadmapPage";
 import CreateRoadmapPage from "../pages/mentor/CreateRoadmapPage";
 
 export default function MentorRoutes() {
@@ -37,9 +37,9 @@ export default function MentorRoutes() {
         </Route>
         <Route path="roadmap" element={<MentorRoadmapLayout />}>
           <Route path="create" element={<CreateRoadmapPage />} />
-          <Route path="all" element={<RoadmapPage />} />
+          <Route path="my_road" element={<RoadmapPage />} />
           <Route path="edit" element={<EditRoadmapPage />} />
-          <Route path="del" element={<DeleteRoadmapPage />} />
+          <Route path="all" element={<DeleteRoadmapPage />} />
         </Route>
       </Route>
     </Routes>

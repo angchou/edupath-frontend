@@ -25,6 +25,20 @@ export default function LearnerRoadmapSideBar() {
             }`
           }
         >
+          <MapMinus size={20} />
+          <span className="font-medium">Tìm lộ trình</span>
+        </NavLink>
+
+        <NavLink
+          to="/learner/roadmap/my_road"
+          className={({ isActive }) =>
+            `${baseStyle} ${
+              isActive
+                ? "bg-blue-50 text-blue-600"
+                : "text-gray-600 hover:bg-gray-50"
+            }`
+          }
+        >
           <Map size={20} />
           <span className="font-medium">Lộ trình của tôi</span>
         </NavLink>
@@ -41,20 +55,6 @@ export default function LearnerRoadmapSideBar() {
         >
           <MapPlus size={20} />
           <span className="font-medium">Chỉnh sửa lộ trình</span>
-        </NavLink>
-
-        <NavLink
-          to="/learner/roadmap/del"
-          className={({ isActive }) =>
-            `${baseStyle} ${
-              isActive
-                ? "bg-blue-50 text-blue-600"
-                : "text-gray-600 hover:bg-gray-50"
-            }`
-          }
-        >
-          <MapMinus size={20} />
-          <span className="font-medium">Xóa lộ trình</span>
         </NavLink>
       </nav>
     </div>

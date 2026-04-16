@@ -1,5 +1,19 @@
 @import "tailwindcss";
 
+@keyframes permanentRotate {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.aim-rotate {
+  animation: permanentRotate 5s linear infinite;
+}
+
 ::-webkit-scrollbar {
   width: 8px;
 }
