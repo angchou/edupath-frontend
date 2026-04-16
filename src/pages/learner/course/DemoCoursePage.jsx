@@ -1,6 +1,7 @@
 import { useParams } from "react-router-dom";
 import DOMPurify from "dompurify";
 import { useNavigate } from "react-router-dom";
+import { LockKeyhole, UnlockKeyhole } from "lucide-react";
 
 export default function DemoCoursePage() {
   const { khoaHocID } = useParams();

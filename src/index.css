@@ -1,1 +1,46 @@
 @import "tailwindcss";
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: transparent;
+  transition: background-color 0.25s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #bed3ff;
+}
+
+.ProseMirror {
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+.ProseMirror {
+  word-break: break-word;
+  overflow-wrap: break-word;
+}
+
+.ProseMirror:focus {
+  outline: none !important;
+}
+
+.ProseMirror {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+html {
+  --title-font-family: 'Helvetica', sans-serif;
+}
+
+.ProseMirror table {
+  table-layout: fixed;
+  width: 100%;
+}

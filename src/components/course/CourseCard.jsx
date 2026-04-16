@@ -1,42 +1,44 @@
-import { Users } from "lucide-react";
-import { useNavigate } from "react-router-dom";
-
 export default function CourseCard({ course }) {
-  const navigate = useNavigate();
-  const handleRegister = () => {
-    navigate("/paycheck", { state: { course } });
-  };
-
   return (
-    <div className="bg-white/20 border border-white/30 rounded-2xl shadow-lg overflow-hidden w-full hover:scale-[1.03] transition duration-300">
-      <div className="h-44 w-full overflow-hidden">
+    <div
+      key={course.khoaHocID}
+      className="bg-white rounded-2xl shadow hover:shadow-lg transition overflow-hidden"
+    >
+      <div className="overflow-hidden">
         <img
-          src={course.image}
-          alt="course"
-          className="w-full h-full object-cover hover:scale-110 transition"
+          src={course.hinhAnh}
+          className="w-full h-48 object-cover transform transition duration-300 hover:scale-110"
         />
       </div>
 
-      <div className="p-4 text-black">
-        <h2 className="text-lg font-bold mb-1 line-clamp-1">{course.title}</h2>
-
-        <p className="text-sm text-black/70 mb-2">Mentor: {course.mentor}</p>
-
-        <div className="flex items-center text-sm text-black/80 mb-2">
-          <Users className="w-4 h-4 mr-1" />
-          {course.students} học viên
+      <div className="flex flex-col justify-center p-6">
+        <h2 className="font-semibold text-lg">{course.tenKhoaHoc}</h2>
+        <div>
+          <p>
+            <b>Người hướng dẫn: </b>
+            {course.hoTen} - {course.nguoiHuongDanID}
+          </p>
         </div>
-
-        <p className="text-sm text-bblack/70 line-clamp-2 mb-4">
-          {course.description}
-        </p>
-
-        <button
-          className="w-full text-white py-2 rounded-lg font-semibold bg-blue-500/60 hover:bg-blue-500 transition"
-          onClick={handleRegister}
-        >
-          Đăng ký ngay
-        </button>
+        <div>
+          <p className="line-clamp-1">
+            <b>Mô tả: </b>
+            {course.moTa}
+          </p>
+        </div>
+        <div>
+          <p>
+            <b>Số lượng học viên: </b>
+            {course.soLuongHocVien}
+          </p>
+        </div>
+        <div>
+          <button
+            className="w-full bg-blue-500 hover:bg-blue-600 text-white text-center p-2 rounded-xl mt-5 font-semibold"
+            onClick={() => navigate(`${course.khoaHocID}`)}
+          >
+            Xem khóa học
+          </button>
+        </div>
       </div>
     </div>
   );

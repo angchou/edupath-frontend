@@ -7,8 +7,11 @@ import MentorRoadmapLayout from "../layouts/mentorLayouts/MentorRoadmapLayout";
 import LearnerCoursePage from "../pages/learner/course/LearnerCoursePage";
 import MyCousePage from "../pages/learner/course/MyCoursePage";
 import RatingCoursePage from "../pages/learner/course/RatingCoursePage";
-import CreateCoursePage from "../pages/mentor/CreateCoursePage";
+import CreateCoursePage from "../pages/mentor/course/CreateCoursePage";
 import CourseDetailPage from "../pages/learner/course/CourseDetailPage";
+import DemoCoursePage from "../pages/learner/course/DemoCoursePage";
+import PaycheckPage from "../pages/paycheck/PaycheckPage";
+import EditCousePage from "../pages/mentor/course/EditCoursePage";
 
 import RoadmapPage from "../pages/learner/roadmap/RoadmapPage";
 import EditRoadmapPage from "../pages/learner/roadmap/EditRoadmapPage";
@@ -21,12 +24,16 @@ export default function MentorRoutes() {
       <Route element={<MentorLayout />}>
         <Route path="course" element={<MentorCourseLayout />}>
           <Route path="all" element={<LearnerCoursePage />} />
+          <Route path="all/demo/:khoaHocID" element={<DemoCoursePage />} />
+          <Route path="paycheck/:khoaHocID" element={<PaycheckPage />} />
 
           <Route path="my_course" element={<MyCousePage />} />
           <Route path="my_course/:khoaHocID" element={<CourseDetailPage />} />
 
           <Route path="rating" element={<RatingCoursePage />} />
+
           <Route path="create" element={<CreateCoursePage />} />
+          <Route path="create/edit/:khoaHocID" element={<EditCousePage />} />
         </Route>
         <Route path="roadmap" element={<MentorRoadmapLayout />}>
           <Route path="create" element={<CreateRoadmapPage />} />

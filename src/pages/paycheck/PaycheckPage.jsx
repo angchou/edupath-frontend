@@ -58,7 +58,7 @@ export default function PaycheckPage() {
   const finalPrice = course.giaBan - calculateDiscount();
 
   return (
-    <div className="p-6 bg-gray-50 min-h-screen">
+    <div className="p-6 bg-gray-50 font-sans">
       <div className="max-w-[75vw] mx-auto grid md:grid-cols-3 gap-6">
         <div className="bg-white my-auto p-6 rounded-xl shadow col-span-2">
           <h2 className="text-xl font-semibold mb-4">Thanh toán khóa học</h2>

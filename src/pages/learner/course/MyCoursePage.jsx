@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
 
 import SearchBar from "../../../components/SearchBar";
+import CourseCard from "../../../components/course/CourseCard";
 
 export default function MyCoursePage() {
   const courses = [
@@ -82,47 +83,7 @@ export default function MyCoursePage() {
         <div className="p-6 max-h-[750px] overflow-y-auto">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {courses.map((course) => (
-              <div
-                key={course.khoaHocID}
-                className="bg-white rounded-2xl shadow hover:shadow-lg transition overflow-hidden"
-              >
-                <div className="overflow-hidden">
-                  <img
-                    src={course.hinhAnh}
-                    className="w-full h-48 object-cover transform transition duration-300 hover:scale-110"
-                  />
-                </div>
-
-                <div className="flex flex-col justify-center p-6">
-                  <h2 className="font-semibold text-lg">{course.tenKhoaHoc}</h2>
-                  <div>
-                    <p>
-                      <b>Người hướng dẫn: </b>
-                      {course.hoTen} - {course.nguoiHuongDanID}
-                    </p>
-                  </div>
-                  <div>
-                    <p className="line-clamp-1">
-                      <b>Mô tả: </b>
-                      {course.moTa}
-                    </p>
-                  </div>
-                  <div>
-                    <p>
-                      <b>Số lượng học viên: </b>
-                      {course.soLuongHocVien}
-                    </p>
-                  </div>
-                  <div>
-                    <button
-                      className="w-full bg-blue-500 hover:bg-blue-600 text-white text-center p-2 rounded-xl mt-5 font-semibold"
-                      onClick={() => navigate(`${course.khoaHocID}`)}
-                    >
-                      Xem khóa học
-                    </button>
-                  </div>
-                </div>
-              </div>
+              <CourseCard course={course} />
             ))}
           </div>
         </div>
