@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 
 const steps = [
   {
@@ -35,6 +36,8 @@ const steps = [
 ];
 
 export default function RoadmapPage() {
+  const navigate = useNavigate();
+
   const [active, setActive] = useState(0);
 
   const progressWidth = (active / (steps.length - 1)) * 100;
@@ -149,7 +152,10 @@ export default function RoadmapPage() {
         </div>
       </div>
       <div className="w-full flex justify-end-safe mr-10">
-        <button className="bg-blue-500 hover:bg-blue-600 hover:shadow-lg transition rounded-lg px-5 py-2 text-white font-semibold">
+        <button
+          onClick={() => navigate(`../edit`)}
+          className="bg-blue-500 hover:bg-blue-600 hover:shadow-lg transition rounded-lg px-5 py-2 text-white font-semibold"
+        >
           Chỉnh sửa lộ trình
         </button>
       </div>

@@ -17,11 +17,18 @@ import {
   Table,
   AArrowUp,
   AArrowDown,
+  TextAlignCenter,
+  TextAlignStart,
+  TextAlignEnd,
+  Undo,
+  Redo,
 } from "lucide-react";
 import Highlight from "@tiptap/extension-highlight";
 import { TableKit } from "@tiptap/extension-table";
 import { Color, TextStyle, FontSize } from "@tiptap/extension-text-style";
 import { FontFamily } from "@tiptap/extension-text-style";
+import TextAlign from "@tiptap/extension-text-align";
+import { UndoRedo } from "@tiptap/extensions";
 
 export default function Tiptap({ onSave, onClose }) {
   const editor = useEditor({
@@ -35,6 +42,9 @@ export default function Tiptap({ onSave, onClose }) {
       FontFamily,
       FontSize,
       Color,
+      TextAlign.configure({
+        types: ["heading", "paragraph"],
+      }),
     ],
     content: null,
     editorProps: {
@@ -191,6 +201,32 @@ export default function Tiptap({ onSave, onClose }) {
                 editor.chain().focus().setFontSize(newSize).run();
               }}
               className="size-8 p-1 hover:bg-white hover:text-black transition rounded-sm"
+            />
+            <TextAlignStart
+              className="size-8 p-1 hover:bg-white hover:text-black transition rounded-sm"
+              onClick={() =>
+                editor.chain().focus().toggleTextAlign("left").run()
+              }
+            />
+            <TextAlignCenter
+              className="size-8 p-1 hover:bg-white hover:text-black transition rounded-sm"
+              onClick={() =>
+                editor.chain().focus().toggleTextAlign("center").run()
+              }
+            />
+            <TextAlignEnd
+              className="size-8 p-1 hover:bg-white hover:text-black transition rounded-sm"
+              onClick={() =>
+                editor.chain().focus().toggleTextAlign("right").run()
+              }
+            />
+            <Undo
+              className="size-8 p-1 hover:bg-white hover:text-black transition rounded-sm"
+              onClick={() => editor.chain().focus().undo().run()}
+            />
+            <Redo
+              className="size-8 p-1 hover:bg-white hover:text-black transition rounded-sm"
+              onClick={() => editor.chain().focus().redo().run()}
             />
           </div>
           <div className="flex gap-2 ml-1 items-center">

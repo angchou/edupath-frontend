@@ -59,7 +59,7 @@ export default function RegisterPage() {
               value={form.hoTen}
               onChange={handleChange}
               placeholder="Nhập tên người dùng"
-              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-2 border-b-1 outline-none"
               required
             />
           </div>
@@ -72,7 +72,7 @@ export default function RegisterPage() {
               value={form.email}
               onChange={handleChange}
               placeholder="Nhập email"
-              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-2 border-b-1 outline-none"
               required
             />
           </div>
@@ -85,7 +85,7 @@ export default function RegisterPage() {
               value={form.password}
               onChange={handleChange}
               placeholder="Nhập mật khẩu"
-              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-2 border-b-1 outline-none"
               required
             />
           </div>
@@ -100,14 +100,14 @@ export default function RegisterPage() {
               value={form.reenter_password}
               onChange={handleChange}
               placeholder="Nhập lại mật khẩu"
-              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-2 border-b-1 outline-none"
               required
             />
           </div>
 
           <button
             type="submit"
-            className="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition"
+            className="w-full mt-2 bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition"
           >
             Đăng ký
           </button>

@@ -75,6 +75,11 @@ export default function GrantMentorPage() {
       userID: selectedCustomer?.userID,
     };
   };
+  const handleClose = () => {
+    setOpenModal(false);
+    setSelectedCustomer(null);
+    setUserCode("");
+  };
   const handleSubmit = (e) => {
     e.preventDefault();
     const payload = buildPayload();
@@ -82,6 +87,8 @@ export default function GrantMentorPage() {
       alert("Không đúng mã học viên");
       return null;
     }
+
+    handleClose();
     console.log(payload);
   };
 
@@ -204,7 +211,7 @@ export default function GrantMentorPage() {
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
           <div className="bg-white w-full max-w-md rounded-xl shadow-lg p-6 relative">
             <button
-              onClick={() => setOpenModal(false)}
+              onClick={handleClose}
               className="absolute top-3 right-3 text-gray-500 hover:text-black"
             >
               <X size={20} />
@@ -255,7 +262,7 @@ export default function GrantMentorPage() {
                 <button
                   type="button"
                   className="w-full bg-[#cf345a] text-white py-2 rounded-lg hover:bg-[#c71c46] transition"
-                  onClick={() => setOpenModal(false)}
+                  onClick={handleClose}
                 >
                   Hủy
                 </button>

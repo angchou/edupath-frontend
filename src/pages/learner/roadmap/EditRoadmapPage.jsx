@@ -45,16 +45,39 @@ export default function EditRoadmapPage() {
   const [steps, setSteps] = useState(initialSteps);
   const [active, setActive] = useState(0);
 
-  const handleSubmit = () => {
-    console.log(steps);
+  const buildPayload = () => {
+    return {
+      loTrinhID: "LT001",
+      dauViecLoTrinh: steps.map((item) => ({
+        dauViecID: item.dauViecID,
+        tenDauViec: item.tenDauViec,
+        moTa: item.moTa,
+        stt: item.moTa,
+      })),
+    };
+  };
+  const deleteRoadmap = () => {
+    const payload = {
+      loTrinhID: "LT001",
+    };
+
+    console.log(payload);
+  };
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const payload = buildPayload();
+
+    console.log(payload);
   };
 
   const handleAdd = () => {
+    const newSTT = steps.length == 0 ? 0 : steps[steps.length - 1].stt;
+
     const newStep = {
       dauViecID: null,
       tenDauViec: "Bước mới",
       moTa: "Mô tả...",
-      stt: steps[steps.length - 1].stt + 10,
+      stt: newSTT + 10,
     };
 
     const newSteps = [...steps, newStep];
@@ -230,7 +253,7 @@ export default function EditRoadmapPage() {
               );
             })}
 
-            {/* NÚT THÊM (+) */}
+            {/* NÚT THÊM */}
             <div className="flex flex-col items-center flex-1">
               <button
                 onClick={handleAdd}
@@ -278,12 +301,16 @@ export default function EditRoadmapPage() {
 
       <div className="w-full flex justify-end-safe mr-10 gap-5">
         <button
+          name="submit"
           onClick={handleSubmit}
           className="bg-blue-500 hover:bg-blue-600 hover:shadow-lg transition rounded-lg px-5 py-2 text-white font-semibold"
         >
           Lưu chỉnh sửa
         </button>
-        <button className="bg-[#cf345a] hover:bg-[#c71c46] hover:shadow-lg transition rounded-lg px-5 py-2 text-white font-semibold">
+        <button
+          onClick={deleteRoadmap}
+          className="bg-[#cf345a] hover:bg-[#c71c46] hover:shadow-lg transition rounded-lg px-5 py-2 text-white font-semibold"
+        >
           Xóa lộ trình
         </button>
       </div>

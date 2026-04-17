@@ -31,7 +31,7 @@ export default function MentorRoadmapSideBar() {
         </NavLink>
 
         <NavLink
-          to="/mentor/roadmap/all"
+          to="/mentor/roadmap/my_road"
           className={({ isActive }) =>
             `${baseStyle} ${
               isActive
@@ -59,7 +59,7 @@ export default function MentorRoadmapSideBar() {
         </NavLink>
 
         <NavLink
-          to="/mentor/roadmap/del"
+          to="/mentor/roadmap/all"
           className={({ isActive }) =>
             `${baseStyle} ${
               isActive
@@ -69,7 +69,7 @@ export default function MentorRoadmapSideBar() {
           }
         >
           <BookAlert size={20} />
-          <span className="font-medium">Xóa lộ trình</span>
+          <span className="font-medium">Lộ trình</span>
         </NavLink>
       </nav>
     </div>

@@ -2,11 +2,10 @@ import { useParams } from "react-router-dom";
 import DOMPurify from "dompurify";
 import { useNavigate } from "react-router-dom";
 import { LockKeyhole, UnlockKeyhole } from "lucide-react";
+import { FaStar } from "react-icons/fa";
 
 export default function DemoCoursePage() {
   const { khoaHocID } = useParams();
-
-  // cần phải fetch api để kiểm tra nếu học viên có sở hữu khóa học -> tải tài nguyên của khóa học lên (đã được sắp xếp STT tăng dần)
 
   const blocks = [
     {
@@ -51,14 +50,45 @@ export default function DemoCoursePage() {
     },
   ];
 
+  const ratings = [
+    {
+      phieuDanhGiaID: "P0001",
+      userID: "U0001",
+      hoTen: "Châu Gia An",
+      diemDanhGia: 3,
+      moTa: "Đây là dòng mô tả Đây là dòng mô tảĐây là dòng mô tảĐây là dòng mô tảĐây là dòng mô tảĐây là dòng mô tảĐây là dòng mô tả",
+    },
+    {
+      phieuDanhGiaID: "P0002",
+      userID: "U0001",
+      hoTen: "Châu Gia An",
+      diemDanhGia: 4,
+      moTa: "Đây là dòng mô tả",
+    },
+    {
+      phieuDanhGiaID: "P0003",
+      userID: "U0001",
+      hoTen: "Châu Gia An",
+      diemDanhGia: 5,
+      moTa: "Đây là dòng mô tả ây là dòng mô tây là dòng mô t ây là dòng mô t",
+    },
+    {
+      phieuDanhGiaID: "P0004",
+      userID: "U0001",
+      hoTen: "Châu Gia An",
+      diemDanhGia: 2,
+      moTa: "Đây là dòng mô tả",
+    },
+  ];
+
   const navigate = useNavigate();
 
   return (
-    <div className="flex flex-col bg-gray-50 font-sans">
-      <div className="p-5 flex-1 flex flex-col items-center overflow-hidden">
+    <div className="flex flex-row bg-gray-50 font-sans">
+      <div className="p-5 basis-128 flex-1 flex flex-col items-center overflow-hidden">
         <div className="h-full bg-white rounded-xl shadow-sm border border-gray-100 overflow-x-auto">
           <div className="max-h-[77vh] overflow-y-auto pl-20 pr-10">
-            <div className="max-w-[50vw]">
+            <div className="max-w-[50vw] py-10">
               {blocks.map((block, index) => {
                 switch (block.loaiTN) {
                   case "text":
@@ -116,6 +146,42 @@ export default function DemoCoursePage() {
         >
           ĐĂNG KÝ KHÓA HỌC
         </button>
+      </div>
+      <div className="p-5 basis-64 flex-1 flex flex-col items-center overflow-hidden">
+        <div className="w-full h-full bg-white rounded-xl shadow-sm border border-gray-100 overflow-x-auto">
+          <div className="max-h-[77vh] overflow-y-auto pl-20 pr-10">
+            <div className="flex flex-col gap-5 py-10">
+              <header className="text-2xl font-bold mt-5">
+                <h1>CÁC ĐÁNH GIÁ KHÓA HỌC</h1>
+              </header>
+              <div className="border border-gray-300 mb-7"></div>
+              {ratings.map((rating) => (
+                <div className="group">
+                  <div className="group-hover:translate-x-2 hover:shadow-lg transition border-l-5 border-blue-500 p-3 flex items-center justify-between gap-1">
+                    <div>
+                      <div className="font-bold">
+                        {rating.hoTen} - {rating.userID}
+                      </div>
+                      <div>
+                        <span className="font-bold">Mô tả: </span>
+                        <p className="pr-5">{rating.moTa}</p>
+                      </div>
+                    </div>
+                    <div className="flex gap-1 p-2 pr-5">
+                      {[1, 2, 3, 4, 5].map((star) => (
+                        <FaStar
+                          key={star}
+                          size={30}
+                          className={`text-gray-300 $ ${star <= rating.diemDanhGia ? "text-yellow-400" : "text-gray-300"}`}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );

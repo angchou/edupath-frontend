@@ -62,6 +62,7 @@ export default function DeleteEmployee() {
   const [selectedEmployee, setSelectedEmployee] = useState(null);
   const [openModal, setOpenModal] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
+  const [userCode, setUserCode] = useState("");
 
   const filteredEmployees = employees.filter((emp) => {
     const keyword = searchTerm.toLowerCase();
@@ -72,6 +73,32 @@ export default function DeleteEmployee() {
       emp.email.toLowerCase().includes(keyword)
     );
   });
+
+  const handleClose = () => {
+    setSelectedEmployee(null);
+    setOpenModal(false);
+    setUserCode("");
+  };
+
+  const buildPayload = () => {
+    return {
+      userID: selectedEmployee?.userID,
+    };
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    const payload = buildPayload();
+    if (payload.userID !== userCode) {
+      alert("Nhập lại mã nhân viên sai!");
+      return;
+    }
+
+    handleClose();
+
+    console.log(payload);
+  };
 
   return (
     <div className="flex flex-col bg-gray-50 font-sans">
@@ -181,7 +208,7 @@ export default function DeleteEmployee() {
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
           <div className="bg-white w-full max-w-md rounded-xl shadow-lg p-6 relative">
             <button
-              onClick={() => setOpenModal(false)}
+              onClick={handleClose}
               className="absolute top-3 right-3 text-gray-500 hover:text-black"
             >
               <X size={20} />
@@ -225,18 +252,20 @@ export default function DeleteEmployee() {
               </div>
             </div>
 
-            <form action="">
+            <form action="" onSubmit={handleSubmit}>
               <input
                 type="text"
                 placeholder="Nhập lại mã nhân viên để xóa"
                 className="w-full border mt-4 rounded-lg p-2 outline-none focus:border-blue-500"
+                value={userCode}
+                onChange={(e) => setUserCode(e.target.value)}
                 required
               />
               <div className="flex gap-1 mt-5">
                 <button
                   type="button"
                   className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition"
-                  onClick={() => setOpenModal(false)}
+                  onClick={handleClose}
                 >
                   Hủy
                 </button>

@@ -74,6 +74,29 @@ export default function RatingCoursePage() {
   const [selectedCourse, setSelectedCourse] = useState(null);
   const [rating, setRating] = useState(0);
   const [hover, setHover] = useState(0);
+  const [desc, setDesc] = useState("");
+
+  const buildPayload = () => {
+    return {
+      khoaHocID: selectedCourse?.khoaHocID,
+      diemDanhGia: rating,
+      moTa: desc,
+    };
+  };
+  const handleClose = () => {
+    setOpenModal(false);
+    setSelectedCourse(null);
+    setDesc("");
+    setRating(0);
+    setHover(0);
+  };
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const payload = buildPayload();
+
+    handleClose();
+    console.log(payload);
+  };
 
   return (
     <div className="flex flex-col bg-gray-50 font-sans">
@@ -141,10 +164,7 @@ export default function RatingCoursePage() {
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
           <div className="bg-white w-full max-w-md rounded-xl shadow-lg p-6 relative">
             <button
-              onClick={() => {
-                setOpenModal(false);
-                setRating(0);
-              }}
+              onClick={handleClose}
               className="absolute top-3 right-3 text-gray-500 hover:text-black"
             >
               <X size={20} />
@@ -192,11 +212,12 @@ export default function RatingCoursePage() {
               {rating === 0 ? "Chưa đánh giá" : `Bạn đã đánh giá ${rating} sao`}
             </p>
 
-            <form action="" className="mt-2">
+            <form action="" onSubmit={handleSubmit} className="mt-2">
               <textarea
                 rows={4}
                 maxLength={300}
                 placeholder="Mô tả đánh giá"
+                onChange={(e) => setDesc(e.target.value)}
                 className="w-full p-2 bg-gray-200 rounded-sm outline-none resize-none"
                 required
               />
@@ -204,9 +225,6 @@ export default function RatingCoursePage() {
               <button
                 name="submit"
                 className="w-full mt-2 bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition"
-                onClick={() => {
-                  console.log("Rating:", rating);
-                }}
               >
                 Gửi đánh giá
               </button>

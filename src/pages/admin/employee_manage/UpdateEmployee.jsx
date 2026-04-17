@@ -102,27 +102,60 @@ export default function UpdateEmployee() {
   useEffect(() => {
     if (selectedEmployee) {
       setForm({
-        hoTen: selectedEmployee.hoTen || "",
-        email: selectedEmployee.email || "",
-        password: selectedEmployee.password || "",
-        reenter_password: selectedEmployee.reenter_password || "",
-        chucVu: selectedEmployee.chucVu || "",
-        roleID: selectedEmployee.roleID || 0,
+        hoTen: selectedEmployee?.hoTen || "",
+        email: selectedEmployee?.email || "",
+        password: selectedEmployee?.password || "",
+        reenter_password: "",
+        chucVu: selectedEmployee?.chucVu || "",
+        roleID: selectedEmployee?.roleID || 0,
       });
     }
   }, [selectedEmployee]);
-  const submitForm = (e) => {
+
+  const buildPayload = () => {
+    return {
+      userID: selectedEmployee?.userID,
+      hoTen: form?.hoTen,
+      email: form?.password,
+      password: form?.password,
+      reenter_password: form?.reenter_password,
+      chucVu: form?.chucVu,
+      roleID: form?.roleID,
+    };
+  };
+
+  const handleClose = () => {
+    setForm({
+      userID: "",
+      hoTen: "",
+      email: "",
+      password: "",
+      reenter_password: "",
+      roleID: 0,
+      chucVu: "",
+    });
+
+    setSeePassword(false);
+    setOpenModal(false);
+  };
+
+  const handleSubmit = (e) => {
     e.preventDefault();
 
+    const payload = buildPayload();
+    console.log(payload);
     if (
-      form.password !== selectedEmployee.password &&
-      form.password !== form.reenter_password
+      payload.password !== selectedEmployee.password &&
+      payload.password !== payload.reenter_password
     ) {
       alert("Password doesn't match");
       return;
     }
 
-    console.log(form);
+    handleClose();
+
+    payload.reenter_password = payload.password;
+    console.log(payload);
   };
   return (
     <div className="flex flex-col bg-gray-50 font-sans">
@@ -233,10 +266,7 @@ export default function UpdateEmployee() {
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
           <div className="bg-white w-full max-w-md rounded-xl shadow-lg p-6 relative">
             <button
-              onClick={() => {
-                setOpenModal(false);
-                setSeePassword(false);
-              }}
+              onClick={handleClose}
               className="absolute top-3 right-3 text-gray-500 hover:text-black"
             >
               <X size={20} />
@@ -246,14 +276,14 @@ export default function UpdateEmployee() {
               Cập nhật thông tin nhân viên
             </h2>
 
-            <form className="space-y-3 cursor-default" onSubmit={submitForm}>
+            <form className="space-y-3 cursor-default" onSubmit={handleSubmit}>
               <input
                 type="text"
                 name="hoTen"
                 value={form.hoTen}
                 placeholder="Họ và tên"
                 onChange={(e) => setForm({ ...form, hoTen: e.target.value })}
-                className="w-full border rounded-lg p-2 outline-none focus:border-blue-500"
+                className="w-full px-4 py-2 border-b-1 outline-none"
                 required
               />
 
@@ -263,7 +293,7 @@ export default function UpdateEmployee() {
                 value={form.email}
                 placeholder="Email"
                 onChange={(e) => setForm({ ...form, email: e.target.value })}
-                className="w-full border rounded-lg p-2 outline-none focus:border-blue-500"
+                className="w-full px-4 py-2 border-b-1 outline-none"
                 required
               />
 
@@ -276,7 +306,7 @@ export default function UpdateEmployee() {
                   onChange={(e) =>
                     setForm({ ...form, password: e.target.value })
                   }
-                  className="w-full border rounded-lg p-2 outline-none focus:border-blue-500"
+                  className="w-full px-4 py-2 border-b-1 outline-none"
                   required
                 />
 
@@ -297,11 +327,11 @@ export default function UpdateEmployee() {
                 type="password"
                 name="reenter_password"
                 value={form.reenter_password}
-                placeholder="Nhập lại mật khẩu"
+                placeholder="Nếu thay đổi mật khẩu thì nhập lại"
                 onChange={(e) =>
                   setForm({ ...form, reenter_password: e.target.value })
                 }
-                className="w-full border rounded-lg p-2 outline-none focus:border-blue-500"
+                className="w-full px-4 py-2 border-b-1 outline-none"
               />
 
               <input
@@ -310,7 +340,7 @@ export default function UpdateEmployee() {
                 value={form.chucVu}
                 placeholder="Chức vụ"
                 onChange={(e) => setForm({ ...form, chucVu: e.target.value })}
-                className="w-full border rounded-lg p-2 outline-none focus:border-blue-500"
+                className="w-full px-4 py-2 border-b-1 outline-none"
                 required
               />
               <select
@@ -339,10 +369,7 @@ export default function UpdateEmployee() {
                 <button
                   type="button"
                   className="w-full bg-[#cf345a] text-white py-2 rounded-lg hover:bg-[#c71c46] transition"
-                  onClick={() => {
-                    setOpenModal(false);
-                    setSeePassword(false);
-                  }}
+                  onClick={handleClose}
                 >
                   Hủy
                 </button>

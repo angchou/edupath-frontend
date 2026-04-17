@@ -3,6 +3,7 @@ import { Routes, Route } from "react-router-dom";
 import MentorLayout from "../layouts/mentorLayouts/MentorLayout";
 import MentorCourseLayout from "../layouts/mentorLayouts/MentorCourseLayout";
 import MentorRoadmapLayout from "../layouts/mentorLayouts/MentorRoadmapLayout";
+import LearnerPeopleLayout from "../layouts/learnerLayouts/LearnerPeopleLayout";
 
 import LearnerCoursePage from "../pages/learner/course/LearnerCoursePage";
 import MyCousePage from "../pages/learner/course/MyCoursePage";
@@ -17,6 +18,9 @@ import RoadmapPage from "../pages/learner/roadmap/RoadmapPage";
 import EditRoadmapPage from "../pages/learner/roadmap/EditRoadmapPage";
 import AllRoadmapPage from "../pages/learner/roadmap/AllRoadmapPage";
 import CreateRoadmapPage from "../pages/mentor/CreateRoadmapPage";
+
+import MessagePage from "../pages/learner/people/MessagePage";
+import PeoplePage from "../pages/learner/people/PeoplePage";
 
 export default function MentorRoutes() {
   return (
@@ -39,7 +43,11 @@ export default function MentorRoutes() {
           <Route path="create" element={<CreateRoadmapPage />} />
           <Route path="my_road" element={<RoadmapPage />} />
           <Route path="edit" element={<EditRoadmapPage />} />
-          <Route path="all" element={<DeleteRoadmapPage />} />
+          <Route path="all" element={<AllRoadmapPage />} />
+        </Route>
+        <Route path="people" element={<LearnerPeopleLayout />}>
+          <Route path="all" element={<PeoplePage />} />
+          <Route path="message" element={<MessagePage />} />
         </Route>
       </Route>
     </Routes>

@@ -18,13 +18,42 @@ export default function AddEmployee() {
     });
   };
 
-  const submitForm = (e) => {
-    e.preventDefault();
-
-    console.log(form);
+  const resetForm = () => {
+    setForm({
+      hoTen: "",
+      email: "",
+      password: "",
+      reenter_password: "",
+      chucVu: "",
+      roleID: 0,
+    });
   };
 
   const employees = [];
+
+  const buildPayload = () => {
+    return {
+      hoTen: form.hoTen,
+      email: form.email,
+      password: form.password,
+      reenter_password: form.reenter_password,
+      chucVu: form.chucVu,
+      roleID: form.roleID,
+    };
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const payload = buildPayload();
+    if (payload.password !== payload.reenter_password) {
+      alert("Nhập lại mật khẩu sai!");
+      return;
+    }
+
+    resetForm();
+    setOpenModal(false);
+    console.log(payload);
+  };
 
   return (
     <div className="flex flex-col bg-gray-50 font-sans">
@@ -131,14 +160,15 @@ export default function AddEmployee() {
               Nhập thông tin nhân viên
             </h2>
 
-            <form className="space-y-3" onSubmit={submitForm}>
+            <form className="space-y-3" onSubmit={handleSubmit}>
               <input
                 type="text"
                 placeholder="Họ và tên"
                 name="hoTen"
                 value={form.hoTen}
                 onChange={handleChange}
-                className="w-full border rounded-lg p-2 outline-none focus:border-blue-500"
+                className="w-full px-4 py-2 border-b-1 outline-none"
+                required
               />
 
               <input
@@ -147,7 +177,8 @@ export default function AddEmployee() {
                 name="email"
                 value={form.email}
                 onChange={handleChange}
-                className="w-full border rounded-lg p-2 outline-none focus:border-blue-500"
+                className="w-full px-4 py-2 border-b-1 outline-none"
+                required
               />
 
               <input
@@ -156,7 +187,8 @@ export default function AddEmployee() {
                 name="password"
                 value={form.password}
                 onChange={handleChange}
-                className="w-full border rounded-lg p-2 outline-none focus:border-blue-500"
+                className="w-full px-4 py-2 border-b-1 outline-none"
+                required
               />
 
               <input
@@ -165,7 +197,8 @@ export default function AddEmployee() {
                 name="reenter_password"
                 value={form.reenter_password}
                 onChange={handleChange}
-                className="w-full border rounded-lg p-2 outline-none focus:border-blue-500"
+                className="w-full px-4 py-2 border-b-1 outline-none"
+                required
               />
 
               <input
@@ -174,14 +207,16 @@ export default function AddEmployee() {
                 name="chucVu"
                 value={form.chucVu}
                 onChange={handleChange}
-                className="w-full border rounded-lg p-2 outline-none focus:border-blue-500"
+                className="w-full px-4 py-2 border-b-1 outline-none"
+                required
               />
 
               <select
                 value={form.roleID}
                 name="roleID"
                 onChange={handleChange}
-                className="w-full border-b-1 p-2 outline-none focus:border-blue-500"
+                className="w-full px-4 py-2 border-b-1 outline-none"
+                required
               >
                 <option value={0} disabled>
                   Chọn vai trò
@@ -197,7 +232,9 @@ export default function AddEmployee() {
                 <button
                   type="button"
                   className="w-full bg-[#cf345a] text-white py-2 rounded-lg hover:bg-[#c71c46] transition"
-                  onClick={() => setOpenModal(false)}
+                  onClick={() => {
+                    setOpenModal(false);
+                  }}
                 >
                   Hủy
                 </button>

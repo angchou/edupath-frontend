@@ -51,13 +51,6 @@ export default function BanCustomerPage() {
       roleID: 1,
       ngayTao: "2024-05-01",
     },
-    {
-      userID: "EMP006",
-      hoTen: "Đỗ Thị F",
-      email: "thif@company.com",
-      roleID: 1,
-      ngayTao: "2024-05-01",
-    },
   ];
 
   const getRoleName = (roleID) => {
@@ -78,19 +71,29 @@ export default function BanCustomerPage() {
   const [duration, setDuration] = useState("");
 
   const buildPayload = () => {
-    if (!duration) {
-      alert("Chọn thời gian đi bro!");
-      return null;
-    }
     return {
       userID: selectedCustomer?.userID,
       timeType: timeType,
       duration: duration,
     };
   };
+  const handleClose = () => {
+    setSelectedCustomer(null);
+    setOpenModal(false);
+    setTimeType("day");
+    setDuration("");
+  };
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    if (!duration) {
+      alert("Vui lòng chọn thời gian chặn người dùng!");
+      return null;
+    }
+
     const payload = buildPayload();
+
+    handleClose();
     console.log(payload);
   };
 
@@ -213,7 +216,7 @@ export default function BanCustomerPage() {
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
           <div className="bg-white w-full max-w-md rounded-xl shadow-lg p-6 relative">
             <button
-              onClick={() => setOpenModal(false)}
+              onClick={handleClose}
               className="absolute top-3 right-3 text-gray-500 hover:text-black"
             >
               <X size={20} />
@@ -294,7 +297,7 @@ export default function BanCustomerPage() {
                 <button
                   type="button"
                   className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition"
-                  onClick={() => setOpenModal(false)}
+                  onClick={handleClose}
                 >
                   Hủy
                 </button>
