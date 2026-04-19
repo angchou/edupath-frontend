@@ -3,64 +3,23 @@ import { useState, useEffect } from "react";
 import { FaPencil } from "react-icons/fa6";
 
 import { Eye, EyeOff, X } from "lucide-react";
+import { getAllEmployees } from "../../../services/EmployeeService";
 
 export default function UpdateEmployee() {
-  const employees = [
-    {
-      userID: "EMP001",
-      hoTen: "Nguyễn Văn A",
-      email: "vana@company.com",
-      password: "1234",
-      roleID: 3,
-      chucVu: "Dev",
-      ngayTao: "2024-10-12",
-    },
-    {
-      userID: "EMP002",
-      hoTen: "Trần Thị B",
-      email: "thib@company.com",
-      password: "1234",
-      roleID: 4,
-      chucVu: "QA",
-      ngayTao: "2024-09-20",
-    },
-    {
-      userID: "EMP003",
-      hoTen: "Lê Văn C",
-      email: "vanc@company.com",
-      password: "1234",
-      roleID: 6,
-      chucVu: "PM",
-      ngayTao: "2024-08-15",
-    },
-    {
-      userID: "EMP004",
-      hoTen: "Phạm Thị D",
-      email: "thid@company.com",
-      password: "1234",
-      roleID: 5,
-      chucVu: "UI/UX",
-      ngayTao: "2024-07-10",
-    },
-    {
-      userID: "EMP005",
-      hoTen: "Hoàng Văn E",
-      email: "vane@company.com",
-      password: "1234",
-      roleID: 3,
-      chucVu: "Ops",
-      ngayTao: "2024-06-05",
-    },
-    {
-      userID: "EMP006",
-      hoTen: "Đỗ Thị F",
-      email: "thif@company.com",
-      password: "1234",
-      roleID: 4,
-      chucVu: "Nhân sự",
-      ngayTao: "2024-05-01",
-    },
-  ];
+  const [employees, setEmployees] = useState([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const data = await getAllEmployees();
+        setEmployees(data);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   const [selectedEmployee, setSelectedEmployee] = useState(null);
   const [openModal, setOpenModal] = useState(false);
@@ -72,7 +31,7 @@ export default function UpdateEmployee() {
     email: "",
     password: "",
     reenter_password: "",
-    roleID: 0,
+    roleName: "",
     chucVu: "",
   });
 
@@ -85,20 +44,7 @@ export default function UpdateEmployee() {
       emp.email.toLowerCase().includes(keyword)
     );
   });
-  const getRoleName = (roleID) => {
-    switch (roleID) {
-      case 3:
-        return "Hỗ trợ";
-      case 4:
-        return "Quản lý chất lượng";
-      case 5:
-        return "Tài chính";
-      case 6:
-        return "Quản trị viên";
-      default:
-        return "Không rõ";
-    }
-  };
+
   useEffect(() => {
     if (selectedEmployee) {
       setForm({
@@ -107,7 +53,7 @@ export default function UpdateEmployee() {
         password: selectedEmployee?.password || "",
         reenter_password: "",
         chucVu: selectedEmployee?.chucVu || "",
-        roleID: selectedEmployee?.roleID || 0,
+        roleName: selectedEmployee?.roleName || "",
       });
     }
   }, [selectedEmployee]);
@@ -120,7 +66,7 @@ export default function UpdateEmployee() {
       password: form?.password,
       reenter_password: form?.reenter_password,
       chucVu: form?.chucVu,
-      roleID: form?.roleID,
+      roleName: form?.roleName,
     };
   };
 
@@ -131,7 +77,7 @@ export default function UpdateEmployee() {
       email: "",
       password: "",
       reenter_password: "",
-      roleID: 0,
+      roleName: "",
       chucVu: "",
     });
 
@@ -224,7 +170,7 @@ export default function UpdateEmployee() {
                         </td>
 
                         <td className="px-6 py-4 text-sm text-gray-600">
-                          {getRoleName(emp.roleID)}
+                          {emp.roleName}
                         </td>
 
                         <td className="px-6 py-4 text-sm text-gray-600">
@@ -344,25 +290,25 @@ export default function UpdateEmployee() {
                 required
               />
               <select
-                name="roleID"
-                value={form.roleID || 0}
+                name="roleName"
+                value={form.roleName || 0}
                 onChange={(e) =>
                   setForm({
                     ...form,
-                    roleID: Number(e.target.value),
+                    roleName: e.target.value,
                   })
                 }
                 className="w-full border-b-1 p-2 outline-none focus:border-blue-500"
                 required
               >
-                <option value={0} disabled>
+                <option value={"none"} disabled>
                   Chọn vai trò
                 </option>
 
-                <option value={3}>Hỗ trợ</option>
-                <option value={4}>Quản lý chất lượng</option>
-                <option value={5}>Tài chính</option>
-                <option value={6}>Admin</option>
+                <option value={"Support"}>Hỗ trợ</option>
+                <option value={"QA"}>Quản lý chất lượng</option>
+                <option value={"Finance"}>Tài chính</option>
+                <option value={"Admin"}>Admin</option>
               </select>
 
               <div className="flex gap-1 mt-5">

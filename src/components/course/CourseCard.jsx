@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom";
+import SecureImage from "../SecureImage";
 
 export default function CourseCard({ course }) {
   const navigate = useNavigate();
@@ -9,7 +10,7 @@ export default function CourseCard({ course }) {
       className="bg-white rounded-2xl shadow hover:shadow-lg transition overflow-hidden"
     >
       <div className="overflow-hidden">
-        <img
+        <SecureImage
           src={course.hinhAnh}
           className="w-full h-48 object-cover transform transition duration-300 hover:scale-110"
         />
@@ -20,7 +21,7 @@ export default function CourseCard({ course }) {
         <div>
           <p>
             <b>Người hướng dẫn: </b>
-            {course.hoTen} - {course.nguoiHuongDanID}
+            {course.hoTen} - {course.userID}
           </p>
         </div>
         <div>

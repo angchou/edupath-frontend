@@ -19,28 +19,29 @@ export default function RegisterPage() {
     });
   };
 
+  const buildPayload = () => {
+    return {
+      hoTen: form.hoTen,
+      email: form.email,
+      password: form.password,
+      reenter_password: form.reenter_password,
+    };
+  };
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (form.password !== form.reenter_password) {
+    const payload = buildPayload(form);
+    if (payload.password !== payload.reenter_password) {
       alert("Mật khẩu không khớp!");
       return;
     }
 
-    try {
-      await registerService({
-        hoTen: form.hoTen,
-        email: form.email,
-        password: form.password,
-        reenter_password: form.reenter_password,
-      });
-
+    const status = await registerService(payload);
+    if (status) {
       alert("Đăng ký thành công!");
-
       navigate("/auth/login");
-    } catch (error) {
-      console.error("Register error:", error);
-      alert(error?.response?.data?.message || "Đăng ký thất bại!");
+    } else {
+      alert("Đăng ký thất bại");
     }
   };
 

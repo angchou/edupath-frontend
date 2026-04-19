@@ -1,72 +1,26 @@
 import { useState } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 
 import SearchBar from "../../../components/SearchBar";
 import CourseCard from "../../../components/course/CourseCard";
+import { getMyCourses } from "../../../services/courseService";
 
 export default function MyCoursePage() {
-  const courses = [
-    {
-      khoaHocID: "KH0001",
-      tenKhoaHoc: "Du học cùng six seven",
-      moTa: "mô tả khóa học mô tả khóa học mô mô tả khóa học mô mô tả khóa học mô mô tả khóa học mô",
-      nguoiHuongDanID: "U0003",
-      hoTen: "Châu Gia An",
-      ngayTao: "<ngày tạo khóa học>",
-      soLuongHocVien: "100",
-      giaBan: 1500000,
-      hinhAnh:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT3PoprumCX_HbXTfKRwKHg6M9iev5dapLsbg&s",
-    },
-    {
-      khoaHocID: "KH0002",
-      tenKhoaHoc: "Du học cùng six seven",
-      moTa: "mô tả khóa học mô tả khóa học mô",
-      nguoiHuongDanID: "U0003",
-      hoTen: "Châu Gia An",
-      ngayTao: "<ngày tạo khóa học>",
-      soLuongHocVien: "100",
-      giaBan: 1500000,
-      hinhAnh:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT3PoprumCX_HbXTfKRwKHg6M9iev5dapLsbg&s",
-    },
-    {
-      khoaHocID: "KH0003",
-      tenKhoaHoc: "Du học cùng six seven",
-      moTa: "mô tả khóa học mô tả khóa học mô",
-      nguoiHuongDanID: "U0003",
-      hoTen: "Châu Gia An",
-      ngayTao: "<ngày tạo khóa học>",
-      soLuongHocVien: "100",
-      giaBan: 1500000,
-      hinhAnh:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT3PoprumCX_HbXTfKRwKHg6M9iev5dapLsbg&s",
-    },
-    {
-      khoaHocID: "KH0004",
-      tenKhoaHoc: "Du học cùng six seven",
-      moTa: "mô tả khóa học mô tả khóa học mô",
-      nguoiHuongDanID: "U0003",
-      hoTen: "Châu Gia An",
-      ngayTao: "<ngày tạo khóa học>",
-      soLuongHocVien: "100",
-      giaBan: 1500000,
-      hinhAnh:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT3PoprumCX_HbXTfKRwKHg6M9iev5dapLsbg&s",
-    },
-    {
-      khoaHocID: "KH0005",
-      tenKhoaHoc: "Du học cùng six seven",
-      moTa: "mô tả khóa học mô tả khóa học mô",
-      nguoiHuongDanID: "U0003",
-      hoTen: "Châu Gia An",
-      ngayTao: "<ngày tạo khóa học>",
-      soLuongHocVien: "100",
-      giaBan: 1500000,
-      hinhAnh:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT3PoprumCX_HbXTfKRwKHg6M9iev5dapLsbg&s",
-    },
-  ];
+  const [courses, setCourses] = useState([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const data = await getMyCourses();
+        setCourses(data);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   const navigate = useNavigate();
 
@@ -80,10 +34,10 @@ export default function MyCoursePage() {
           <SearchBar label="Tìm kiếm khóa học" />
         </header>
 
-        <div className="p-6 max-h-[750px] overflow-y-auto">
+        <div className="p-6 max-h-[75vh] overflow-y-auto">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {courses.map((course) => (
-              <CourseCard course={course} />
+              <CourseCard key={course.khoaHocID} course={course} />
             ))}
           </div>
         </div>

@@ -1,24 +1,28 @@
 import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
 
 import AddCourseCard from "../../../components/course/AddCourseCard";
+import { getCreatedCourses } from "../../../services/courseService";
+
+import SecureImage from "../../../components/SecureImage";
 
 export default function CreateCoursePage() {
   const navigate = useNavigate();
 
-  const courses = [
-    {
-      khoaHocID: "KH0001",
-      tenKhoaHoc: "Du học cùng six seven",
-      moTa: "mô tả khóa học mô tả khóa học mô mô tả khóa học mô mô tả khóa học mô mô tả khóa học mô",
-      nguoiHuongDanID: "U0003",
-      hoTen: "Châu Gia An",
-      ngayTao: "<ngày tạo khóa học>",
-      soLuongHocVien: "100",
-      giaBan: 1500000,
-      hinhAnh:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT3PoprumCX_HbXTfKRwKHg6M9iev5dapLsbg&s",
-    },
-  ];
+  const [courses, setCourses] = useState([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const data = await getCreatedCourses();
+        setCourses(data);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   return (
     <div className="flex flex-col bg-gray-50 font-sans">
@@ -29,15 +33,15 @@ export default function CreateCoursePage() {
           </h2>{" "}
         </header>
 
-        <div className="p-6 max-h-[750px] overflow-y-auto">
+        <div className="p-6 max-h-[75vh] overflow-y-auto">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {courses.map((course) => (
               <div
                 key={course.khoaHocID}
-                className="bg-white rounded-2xl shadow hover:shadow-lg transition overflow-hidden max-h-[420px]"
+                className="bg-white rounded-2xl shadow hover:shadow-lg transition overflow-hidden"
               >
                 <div className="overflow-hidden">
-                  <img
+                  <SecureImage
                     src={course.hinhAnh}
                     className="w-full h-48 object-cover transform transition duration-300 hover:scale-110"
                   />

@@ -1,18 +1,17 @@
 import { BASE_URL } from "../utils/apiConfig";
 import { jwtDecode } from "jwt-decode";
 
-export const loginService = async (form) => {
-  const res = await fetch(BASE_URL + "/auth/login", {
+export const loginService = async (payload) => {
+  const res = await fetch(`${BASE_URL}/auth/login`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify(form),
+    body: JSON.stringify(payload),
   });
 
   if (!res.ok) {
-    const errorData = await res.json();
-    throw new Error(errorData.message || "Login failed!");
+    return "";
   }
 
   const data = await res.json();
@@ -24,18 +23,17 @@ export const loginService = async (form) => {
   return roles;
 };
 
-export const registerService = async (form) => {
+export const registerService = async (payload) => {
   const res = await fetch(`${BASE_URL}/auth/register`, {
     method: "POST",
     headers: {
-      "Content-Type": "application/json",
+      "Content-type": "application/json",
     },
-    body: JSON.stringify(form),
+    body: JSON.stringify(payload),
   });
 
   if (!res.ok) {
-    const errorData = await res.json();
-    throw new Error(errorData.message || "Register failed!");
+    return false;
   }
   return true;
 };

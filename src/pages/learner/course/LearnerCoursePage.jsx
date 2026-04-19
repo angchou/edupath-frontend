@@ -1,73 +1,29 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
+import { getNormalCourses } from "../../../services/courseService";
 
 import SearchBar from "../../../components/SearchBar";
 
+import SecureImage from "../../../components/SecureImage";
+
 export default function LearnerCoursePage() {
-  const courses = [
-    {
-      khoaHocID: "KH0001",
-      tenKhoaHoc: "Du học cùng six seven",
-      moTa: "mô tả khóa học mô tả khóa học mô mô tả khóa học mô mô tả khóa học mô mô tả khóa học mô",
-      nguoiHuongDanID: "U0003",
-      hoTen: "Châu Gia An",
-      ngayTao: "<ngày tạo khóa học>",
-      soLuongHocVien: "100",
-      giaBan: 1500000,
-      hinhAnh:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT3PoprumCX_HbXTfKRwKHg6M9iev5dapLsbg&s",
-    },
-    {
-      khoaHocID: "KH0002",
-      tenKhoaHoc: "Du học cùng six seven",
-      moTa: "mô tả khóa học mô tả khóa học mô",
-      nguoiHuongDanID: "U0003",
-      hoTen: "Châu Gia An",
-      ngayTao: "<ngày tạo khóa học>",
-      soLuongHocVien: "100",
-      giaBan: 1500000,
-      hinhAnh:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT3PoprumCX_HbXTfKRwKHg6M9iev5dapLsbg&s",
-    },
-    {
-      khoaHocID: "KH0003",
-      tenKhoaHoc: "Du học cùng six seven",
-      moTa: "mô tả khóa học mô tả khóa học mô",
-      nguoiHuongDanID: "U0003",
-      hoTen: "Châu Gia An",
-      ngayTao: "<ngày tạo khóa học>",
-      soLuongHocVien: "100",
-      giaBan: 1500000,
-      hinhAnh:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT3PoprumCX_HbXTfKRwKHg6M9iev5dapLsbg&s",
-    },
-    {
-      khoaHocID: "KH0004",
-      tenKhoaHoc: "Du học cùng six seven",
-      moTa: "mô tả khóa học mô tả khóa học mô",
-      nguoiHuongDanID: "U0003",
-      hoTen: "Châu Gia An",
-      ngayTao: "<ngày tạo khóa học>",
-      soLuongHocVien: "100",
-      giaBan: 1500000,
-      hinhAnh:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT3PoprumCX_HbXTfKRwKHg6M9iev5dapLsbg&s",
-    },
-    {
-      khoaHocID: "KH0005",
-      tenKhoaHoc: "Du học cùng six seven",
-      moTa: "mô tả khóa học mô tả khóa học mô",
-      nguoiHuongDanID: "U0003",
-      hoTen: "Châu Gia An",
-      ngayTao: "<ngày tạo khóa học>",
-      soLuongHocVien: "100",
-      giaBan: 1500000,
-      hinhAnh:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT3PoprumCX_HbXTfKRwKHg6M9iev5dapLsbg&s",
-    },
-  ];
+  const [courses, setCourses] = useState([]);
 
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const data = await getNormalCourses();
+        setCourses(data);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   return (
     <div className="flex flex-col bg-gray-50 font-sans">
@@ -79,48 +35,41 @@ export default function LearnerCoursePage() {
           <SearchBar label="Tìm kiếm khóa học" />
         </header>
 
-        <div className="p-6 max-h-[750px] overflow-y-auto">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="p-6 max-h-[75vh] overflow-y-auto">
+          <div className="h-full flex flex-col grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {courses.map((course) => (
               <div
                 key={course.khoaHocID}
-                className="bg-white rounded-2xl shadow hover:shadow-lg transition overflow-hidden"
+                className="bg-white rounded-2xl shadow hover:shadow-lg transition overflow-hidden flex flex-col h-full"
               >
                 <div className="overflow-hidden">
-                  <img
+                  <SecureImage
                     src={course.hinhAnh}
                     className="w-full h-48 object-cover transform transition duration-300 hover:scale-110"
                   />
                 </div>
-
-                <div className="flex flex-col justify-center p-6">
-                  <h2 className="font-semibold text-lg">{course.tenKhoaHoc}</h2>
-                  <div>
+                <div className="flex flex-col flex-1 p-6">
+                  <div className="flex-1">
+                    <h2 className="font-semibold text-lg">{course.tenKH}</h2>
                     <p>
                       <b>Người hướng dẫn: </b>
                       {course.hoTen} - {course.nguoiHuongDanID}
                     </p>
-                  </div>
-                  <div>
-                    <p className="line-clamp-1">
+                    <p className="line-clamp-2">
                       <b>Mô tả: </b>
                       {course.moTa}
                     </p>
-                  </div>
-                  <div>
                     <p>
                       <b>Số lượng học viên: </b>
                       {course.soLuongHocVien}
                     </p>
-                  </div>
-                  <div>
                     <p>
                       <b>Giá bán: </b>
-                      {course.giaBan} đồng
+                      {course.mucPhi} đồng
                     </p>
                   </div>
 
-                  <div>
+                  <div className="mt-auto">
                     <button
                       className="w-full bg-blue-500 hover:bg-blue-600 text-white text-center p-2 rounded-xl mt-5 font-semibold"
                       onClick={() => navigate(`demo/${course.khoaHocID}`)}

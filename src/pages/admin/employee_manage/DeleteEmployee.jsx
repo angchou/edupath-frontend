@@ -1,5 +1,7 @@
 import SearchBar from "../../../components/SearchBar";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+
+import { getAllEmployees } from "../../../services/EmployeeService";
 
 import { Eye, X } from "lucide-react";
 import { FaUserCircle, FaCode, FaTag } from "react-icons/fa";
@@ -8,56 +10,20 @@ import { FaGear } from "react-icons/fa6";
 import { IoCreate } from "react-icons/io5";
 
 export default function DeleteEmployee() {
-  const employees = [
-    {
-      userID: "EMP001",
-      hoTen: "Nguyễn Văn A",
-      email: "vana@company.com",
-      roleID: "Developer",
-      chucVu: "Dev",
-      ngayTao: "2024-10-12",
-    },
-    {
-      userID: "EMP002",
-      hoTen: "Trần Thị B",
-      email: "thib@company.com",
-      roleID: "Tester",
-      chucVu: "QA",
-      ngayTao: "2024-09-20",
-    },
-    {
-      userID: "EMP003",
-      hoTen: "Lê Văn C",
-      email: "vanc@company.com",
-      roleID: "Project Manager",
-      chucVu: "PM",
-      ngayTao: "2024-08-15",
-    },
-    {
-      userID: "EMP004",
-      hoTen: "Phạm Thị D",
-      email: "thid@company.com",
-      roleID: "Designer",
-      chucVu: "UI/UX",
-      ngayTao: "2024-07-10",
-    },
-    {
-      userID: "EMP005",
-      hoTen: "Hoàng Văn E",
-      email: "vane@company.com",
-      roleID: "DevOps",
-      chucVu: "Ops",
-      ngayTao: "2024-06-05",
-    },
-    {
-      userID: "EMP006",
-      hoTen: "Đỗ Thị F",
-      email: "thif@company.com",
-      roleID: "HR",
-      chucVu: "Nhân sự",
-      ngayTao: "2024-05-01",
-    },
-  ];
+  const [employees, setEmployees] = useState([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const data = await getAllEmployees();
+        setEmployees(data);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   const [selectedEmployee, setSelectedEmployee] = useState(null);
   const [openModal, setOpenModal] = useState(false);
@@ -70,7 +36,8 @@ export default function DeleteEmployee() {
     return (
       emp.userID.toLowerCase().includes(keyword) ||
       emp.hoTen.toLowerCase().includes(keyword) ||
-      emp.email.toLowerCase().includes(keyword)
+      emp.email.toLowerCase().includes(keyword) ||
+      emp.roleName.toLowerCase().includes(keyword)
     );
   });
 
@@ -167,7 +134,7 @@ export default function DeleteEmployee() {
                         </td>
 
                         <td className="px-6 py-4 text-sm text-gray-600">
-                          {emp.roleID}
+                          {emp.roleName}
                         </td>
 
                         <td className="px-6 py-4 text-sm text-gray-600">
@@ -242,7 +209,7 @@ export default function DeleteEmployee() {
                 <div className="flex gap-3">
                   <FaGear size={20} className="mt-1 rotate-5 text-gray-500" />
                   <span className="font-bold">Vai trò:</span>
-                  {selectedEmployee?.roleID}
+                  {selectedEmployee?.roleName}
                 </div>
                 <div className="flex gap-3">
                   <IoCreate size={20} className="mt-1 -rotate-5" />

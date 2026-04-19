@@ -1,63 +1,28 @@
 import SearchBar from "../../../components/SearchBar";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 import { Eye, X } from "lucide-react";
 import { FaUserCircle, FaCode, FaTag } from "react-icons/fa";
 import { MdEmail } from "react-icons/md";
 import { FaGear } from "react-icons/fa6";
 import { IoCreate } from "react-icons/io5";
+import { getAllEmployees } from "../../../services/EmployeeService";
 
 export default function SearchEmployee() {
-  const employees = [
-    {
-      userID: "EMP001",
-      hoTen: "Nguyễn Văn A",
-      email: "vana@company.com",
-      roleID: "Developer",
-      chucVu: "Dev",
-      ngayTao: "2024-10-12",
-    },
-    {
-      userID: "EMP002",
-      hoTen: "Trần Thị B",
-      email: "thib@company.com",
-      roleID: "Tester",
-      chucVu: "QA",
-      ngayTao: "2024-09-20",
-    },
-    {
-      userID: "EMP003",
-      hoTen: "Lê Văn C",
-      email: "vanc@company.com",
-      roleID: "Project Manager",
-      chucVu: "PM",
-      ngayTao: "2024-08-15",
-    },
-    {
-      userID: "EMP004",
-      hoTen: "Phạm Thị D",
-      email: "thid@company.com",
-      roleID: "Designer",
-      chucVu: "UI/UX",
-      ngayTao: "2024-07-10",
-    },
-    {
-      userID: "EMP005",
-      hoTen: "Hoàng Văn E",
-      email: "vane@company.com",
-      roleID: "DevOps",
-      chucVu: "Ops",
-      ngayTao: "2024-06-05",
-    },
-    {
-      userID: "EMP006",
-      hoTen: "Đỗ Thị F",
-      email: "thif@company.com",
-      roleID: "HR",
-      chucVu: "Nhân sự",
-      ngayTao: "2024-05-01",
-    },
-  ];
+  const [employees, setEmployees] = useState([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const data = await getAllEmployees();
+        setEmployees(data);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   const [selectedEmployee, setSelectedEmployee] = useState(null);
   const [openModal, setOpenModal] = useState(false);
@@ -140,7 +105,7 @@ export default function SearchEmployee() {
                         </td>
 
                         <td className="px-6 py-4 text-sm text-gray-600">
-                          {emp.roleID}
+                          {emp.roleName}
                         </td>
 
                         <td className="px-6 py-4 text-sm text-gray-600">
@@ -216,21 +181,29 @@ export default function SearchEmployee() {
                 <div className="flex gap-3">
                   <FaGear size={20} className="mt-1 rotate-5 text-gray-500" />
                   <span className="font-bold">Vai trò:</span>
-                  {selectedEmployee?.roleID}
+                  {selectedEmployee?.roleName}
                 </div>
                 <div className="flex gap-3">
                   <IoCreate size={20} className="mt-1 -rotate-5" />
                   <span className="font-bold">Ngày tạo tài khoản:</span>
                   {selectedEmployee?.ngayTao}
                 </div>
+                <div className="flex gap-3">
+                  <span className="font-bold">Lương cơ bản:</span>
+                  {selectedEmployee?.luongCoBan} đồng
+                </div>
+                <div className="flex gap-3">
+                  <span className="font-bold">Lương phụ cấp:</span>
+                  {selectedEmployee?.luongPhuCap} đồng
+                </div>
               </div>
-                <button
-                  type="submit"
-                  className="w-full bg-blue-500 hover:bg-blue-600 text-white py-2 rounded-lg transition mt-5"
-                  onClick={() => setOpenModal(false)}
-                >
-                  Thoát
-                </button>
+              <button
+                type="submit"
+                className="w-full bg-blue-500 hover:bg-blue-600 text-white py-2 rounded-lg transition mt-5"
+                onClick={() => setOpenModal(false)}
+              >
+                Thoát
+              </button>
             </div>
           </div>
         </div>

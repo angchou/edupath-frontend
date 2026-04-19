@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { loginService } from "../../services/authService";
+import { pasteRegex } from "@tiptap/extension-highlight";
 
 export default function LoginPage() {
   const [form, setForm] = useState({
@@ -17,18 +18,35 @@ export default function LoginPage() {
     });
   };
 
+  const buildPayload = () => {
+    return {
+      email: form.email,
+      password: form.password,
+    };
+  };
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!form.email || !form.password) {
+    const payload = buildPayload();
+    if (!payload.email || !payload.password) {
       setError("All fields are required!");
       return;
     }
 
     setError("");
-    const roles = await loginService(form);
-    if (roles.includes("Learner")) {
-      navigate("/learner/course");
+    const roles = await loginService(payload);
+    if (roles.includes("Admin")) {
+      navigate("/admin/employee/add");
+    } else if (roles.includes("Finance")) {
+      navigate("/finance/course_payment/refund");
+    } else if (roles.includes("QA")) {
+      navigate("/qa/course/approve");
+    } else if (roles.includes("Support")) {
+      navigate("/support/ticket/process");
+    } else if (roles.includes("Mentor")) {
+      navigate("/mentor/course/create");
+    } else if (roles.includes("Learner")) {
+      navigate("/learner/course/all");
     }
   };
 
@@ -70,8 +88,6 @@ export default function LoginPage() {
           >
             Đăng nhập
           </button>
-
-          {error && <p className="text-red-500 mt-2 text-center">{error}</p>}
         </form>
 
         <div className="flex justify-between">
