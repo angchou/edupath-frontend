@@ -78,11 +78,11 @@ export default function RatingCoursePage() {
                 </div>
 
                 <div className="flex flex-col justify-center p-6">
-                  <h2 className="font-semibold text-lg">{course.tenKhoaHoc}</h2>
+                  <h2 className="font-semibold text-lg">{course.tenKH}</h2>
                   <div>
                     <p>
                       <b>Người hướng dẫn: </b>
-                      {course.hoTen} - {course.nguoiHuongDanID}
+                      {course.hoTen} - {course.userID}
                     </p>
                   </div>
                   <div>
@@ -132,7 +132,7 @@ export default function RatingCoursePage() {
               <div className="flex gap-3 flex items-center">
                 <FaCode size={20} className="text-yellow-500" />
                 <span className="font-bold">Tên khóa học:</span>
-                {selectedCourse?.tenKhoaHoc}
+                {selectedCourse?.tenKH}
               </div>
               <div className="flex gap-3 flex items-center">
                 <FaCode size={20} className="text-red-500" />

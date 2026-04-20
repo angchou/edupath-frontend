@@ -62,7 +62,7 @@ export default function Tiptap({ onSave, onClose }) {
     if (!editor) return;
 
     if (editor.isEmpty) {
-      alert("Chưa có nội dung gì sao mà lưu?");
+      alert("Không được để trống nội dung!");
       return;
     }
 

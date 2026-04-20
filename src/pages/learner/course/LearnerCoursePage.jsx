@@ -53,7 +53,7 @@ export default function LearnerCoursePage() {
                     <h2 className="font-semibold text-lg">{course.tenKH}</h2>
                     <p>
                       <b>Người hướng dẫn: </b>
-                      {course.hoTen} - {course.nguoiHuongDanID}
+                      {course.hoTen} - {course.userID}
                     </p>
                     <p className="line-clamp-2">
                       <b>Mô tả: </b>

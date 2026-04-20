@@ -10,6 +10,7 @@ export default function CreateCoursePage() {
   const navigate = useNavigate();
 
   const [courses, setCourses] = useState([]);
+  const [blocks, setBlocks] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -38,7 +39,7 @@ export default function CreateCoursePage() {
             {courses.map((course) => (
               <div
                 key={course.khoaHocID}
-                className="bg-white rounded-2xl shadow hover:shadow-lg transition overflow-hidden"
+                className="flex flex-col bg-white rounded-2xl shadow hover:shadow-lg transition overflow-hidden"
               >
                 <div className="overflow-hidden">
                   <SecureImage
@@ -48,7 +49,7 @@ export default function CreateCoursePage() {
                 </div>
 
                 <div className="flex flex-col justify-center p-6">
-                  <h2 className="font-semibold text-lg">{course.tenKhoaHoc}</h2>
+                  <h2 className="font-semibold text-lg">{course.tenKH}</h2>
                   <div>
                     <p className="line-clamp-1">
                       <b>Mô tả: </b>
@@ -64,7 +65,7 @@ export default function CreateCoursePage() {
                   <div>
                     <p>
                       <b>Giá bán: </b>
-                      {course.giaBan} đồng
+                      {course.mucPhi} đồng
                     </p>
                   </div>
                   <div>
@@ -75,11 +76,19 @@ export default function CreateCoursePage() {
                   </div>
                   <div>
                     <button
-                      className="w-full bg-blue-500 hover:bg-blue-600 text-white text-center p-2 rounded-xl mt-5 font-semibold"
+                      className="w-full bg-blue-500 hover:bg-blue-600 text-white text-center p-2 rounded-xl mt-5 font-semibold transition"
                       onClick={() => navigate(`edit/${course.khoaHocID}`)}
                     >
                       Cập nhật khóa học
                     </button>
+                    <div className="flex gap-2 w-full mt-2">
+                      <button className="w-full bg-blue-500 hover:bg-blue-600 text-white text-center p-2 rounded-xl font-semibold transition">
+                        Yêu cầu mở công khai
+                      </button>{" "}
+                      <button className="w-full bg-blue-500 hover:bg-blue-600 text-white text-center p-2 rounded-xl font-semibold transition">
+                        Lịch sử đánh dấu
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>

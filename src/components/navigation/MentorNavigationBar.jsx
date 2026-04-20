@@ -36,7 +36,7 @@ export default function MentorNavigationBar() {
 
       <div className="flex items-center gap-4">
         <div className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center cursor-pointer hover:bg-gray-300 transition">
-          <Link to={"/learner/profile"}>
+          <Link to={"/mentor/profile"}>
             <User size={20} />
           </Link>
         </div>

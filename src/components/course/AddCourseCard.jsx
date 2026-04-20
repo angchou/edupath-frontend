@@ -1,54 +1,89 @@
 import { useState } from "react";
 import { CirclePlus } from "lucide-react";
+import {
+  createCourse,
+  uploadCourseCoverPhoto,
+} from "../../services/courseService";
 
 export default function AddCourseCard({ onAdd }) {
   const [isOpen, setIsOpen] = useState(false);
   const [preview, setPreview] = useState(null);
-
+  const [file, setFile] = useState(null);
   const [form, setForm] = useState({
-    tenKhoaHoc: "",
+    tenKH: "",
     loaiKH: "",
     moTa: "",
     mucPhi: "",
-    SLHV: null,
+    slhv: null,
     anhBia: "",
   });
-
-  const handleUpload = async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-
-    setPreview(URL.createObjectURL(file));
-
-    const formData = new FormData();
-    formData.append("file", file);
-  };
-
   const handleChange = (e) => {
     setForm({
       ...form,
       [e.target.name]: e.target.value,
     });
   };
+  const handleUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
 
-  const handleSubmit = (e) => {
+    // Giới hạn 10MB (10 * 1024 * 1024 bytes)
+    const maxSize = 10 * 1024 * 1024;
+
+    if (file.size > maxSize) {
+      alert("Kích thước ảnh quá lớn! Vui lòng chọn ảnh dưới 5MB.");
+      e.target.value = ""; // Reset input file
+      return;
+    }
+
+    if (preview) {
+      URL.revokeObjectURL(preview);
+    }
+
+    const objectUrl = URL.createObjectURL(file);
+    setFile(file);
+    setPreview(objectUrl);
+
+    const formData = new FormData();
+    formData.append("file", file);
+  };
+  const buildPayload = () => {
+    return {
+      tenKH: form.tenKH,
+      loaiKH: form.loaiKH,
+      moTa: form.moTa,
+      mucPhi: Number(form.mucPhi),
+      slhv: Number(form.slhv),
+    };
+  };
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(form);
+    const payload = buildPayload();
+    console.log(payload);
 
-    if (!form.tenKhoaHoc) return;
+    // create course
+    const newCourseID = await createCourse(payload);
+    console.log(newCourseID);
 
+    // upload cover photo
+    if (newCourseID) {
+      const fetchImage = await uploadCourseCoverPhoto(newCourseID, file);
+      console.log("Successed!");
+    } else {
+      console.log("Failed uploading photo!");
+    }
+
+    // reset :>
     onAdd(form);
     setIsOpen(false);
-
     setForm({
-      tenKhoaHoc: "",
+      tenKH: "",
       loaiKH: "",
       moTa: "",
       mucPhi: "",
       SLHV: null,
       anhBia: "",
     });
-
     setPreview(null);
   };
 
@@ -64,7 +99,6 @@ export default function AddCourseCard({ onAdd }) {
       </div>
     );
   }
-
   return (
     <form onSubmit={handleSubmit}>
       <div className="bg-white rounded-2xl shadow p-5 flex flex-col h-full gap-2">
@@ -92,9 +126,9 @@ export default function AddCourseCard({ onAdd }) {
         )}
 
         <input
-          name="tenKhoaHoc"
+          name="tenKH"
           placeholder="Tên khóa học"
-          value={form.tenKhoaHoc}
+          value={form.tenKH}
           onChange={handleChange}
           className="p-2 outline-none border-b-1 focus:border-blue-500"
           required
@@ -137,8 +171,8 @@ export default function AddCourseCard({ onAdd }) {
               Loại khóa học
             </option>
 
-            <option value="du_hoc">Du học</option>
-            <option value="cv">CV</option>
+            <option value={1}>Du học</option>
+            <option value={2}>CV</option>
           </select>
 
           <select
@@ -178,7 +212,7 @@ export default function AddCourseCard({ onAdd }) {
             onClick={() => {
               setIsOpen(false);
               setForm({
-                tenKhoaHoc: "",
+                tenKH: "",
                 loaiKH: "",
                 moTa: "",
                 mucPhi: "",

@@ -1,31 +1,22 @@
 import { useParams } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import DOMPurify from "dompurify";
 
-import Tiptap from "../../../components/Tiptap";
+import {
+  getCourseResource,
+  deleteResource,
+} from "../../../services/courseService";
+import { uploadText } from "../../../services/courseService";
+
+import TextBlock from "../../../components/course/block/TextBlock";
 import ImageBlock from "../../../components/course/block/ImageBlock";
 import VideoBlock from "../../../components/course/block/VideoBlock";
 
+import { X, ChevronDown, ChevronUp } from "lucide-react";
+
 export default function EditCoursePage() {
   const { khoaHocID } = useParams();
-
-  const blocks = [
-    {
-      taiNguyenID: "TN002",
-      loaiTN: "image",
-      STT: 2,
-      text: null,
-      url: "https://images.rpgsite.net/image/da49c9a1/160022/original/persona-3-reload_20251021_switch-2-full-game-review-6.png",
-      khoaHocID: "KH001",
-    },
-    {
-      taiNguyenID: "TN001",
-      loaiTN: "text",
-      STT: 1,
-      text: "<h2>Tiêu đề</h2><p><b>Nội dung</b> có format</p><h1>Đây là hình ảnh<h2/>",
-      url: null,
-      khoaHocID: "KH001",
-    },
-  ];
+  const [blocks, setBlocks] = useState([]);
 
   const [activeBlock, setActiveBlock] = useState(null);
   const [showTipTap, setShowTipTap] = useState(false);
@@ -33,6 +24,66 @@ export default function EditCoursePage() {
   const [showVideoBlock, setShowVideoBlock] = useState(false);
 
   const handleClose = () => setActiveBlock(null);
+
+  const moveBlock = (fromIndex, toIndex) => {
+    if (toIndex < 0 || toIndex >= blocks.length) return;
+
+    const updated = [...blocks];
+    const temp = updated[fromIndex];
+    updated[fromIndex] = updated[toIndex];
+    updated[toIndex] = temp;
+
+    setBlocks(updated);
+  };
+
+  const fetchBlocks = async () => {
+    try {
+      const data = await getCourseResource(khoaHocID);
+      console.log(data);
+      setBlocks(data);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  useEffect(() => {
+    fetchBlocks();
+  }, []);
+
+  const handleDeleteResource = async (taiNguyenID) => {
+    try {
+      await deleteResource(khoaHocID, taiNguyenID);
+
+      await fetchBlocks();
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const handleUploadText = async (html) => {
+    try {
+      const nextSTT =
+        blocks.length === 0
+          ? 1
+          : Math.max(...blocks.map((b) => b.stt || 0)) + 1;
+
+      const newBlock = {
+        url: null,
+        loaiTN: 1,
+        stt: nextSTT,
+        text: html,
+      };
+
+      await uploadText(newBlock, khoaHocID);
+
+      await fetchBlocks();
+
+      handleClose();
+      setShowTipTap(false);
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   return (
     <div className="flex flex-col bg-gray-50 font-sans">
@@ -77,17 +128,13 @@ export default function EditCoursePage() {
               </div>
 
               {showTipTap && (
-                <Tiptap
-                  onSave={(html) => {
-                    console.log("HTML:", html);
-                    handleClose();
-                    setShowTipTap(false);
-                  }}
+                <TextBlock
+                  onSave={handleUploadText}
                   onClose={() => {
                     handleClose();
                     setShowTipTap(false);
                   }}
-                ></Tiptap>
+                ></TextBlock>
               )}
 
               {showImageBlock && (
@@ -115,6 +162,86 @@ export default function EditCoursePage() {
                   }}
                 />
               )}
+
+              <div className="w-full pt-10 pb-5 flex flex-col gap-5">
+                {blocks.map((block, index) => {
+                  switch (block.loaiTN) {
+                    case 1:
+                      return (
+                        <div key={index} className="relative pt-8">
+                          <div className="absolute top-2 right-2 flex gap-5">
+                            <button
+                              className="text-gray-500 group"
+                              onClick={() => moveBlock(index, index + 1)}
+                            >
+                              <ChevronDown
+                                size={25}
+                                className="group-hover:text-blue-500 hover:scale-150 transition"
+                              />
+                            </button>
+                            <button
+                              className="text-gray-500 group"
+                              onClick={() => moveBlock(index, index - 1)}
+                            >
+                              <ChevronUp
+                                size={25}
+                                className="group-hover:text-green-500 hover:scale-150 transition"
+                              />
+                            </button>
+                            <button
+                              className="text-gray-500 group"
+                              onClick={() =>
+                                handleDeleteResource(block.taiNguyenID)
+                              }
+                            >
+                              <X
+                                size={25}
+                                className="group-hover:text-red-500 hover:scale-150 transition"
+                              />
+                            </button>
+                          </div>
+                          <div
+                            key={index}
+                            className="tiptap text-justify p-3 pl-6 border-l-5 border-green-600"
+                            dangerouslySetInnerHTML={{
+                              __html: DOMPurify.sanitize(block.text),
+                            }}
+                          />
+                        </div>
+                      );
+                    case 2:
+                      return (
+                        <div key={index} className="w-full flex mt-5">
+                          <img
+                            src={block.url}
+                            alt=""
+                            className="max-h-[50vh] w-auto object-contain rounded-xl"
+                          />
+                        </div>
+                      );
+
+                    case 3:
+                      return (
+                        <div
+                          key={index}
+                          className="w-full flex justify-left mt-5"
+                        >
+                          <div className="w-full max-w-5xl aspect-video">
+                            <video
+                              controls
+                              className="w-full h-full rounded-xl shadow-md object-cover"
+                            >
+                              <source src={block.url} type="video/mp4" />
+                            </video>
+                          </div>
+                        </div>
+                      );
+
+                    default:
+                      return null;
+                  }
+                })}
+              </div>
             </div>
           </div>
         </div>

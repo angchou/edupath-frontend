@@ -17,7 +17,7 @@ export default function CourseCard({ course }) {
       </div>
 
       <div className="flex flex-col justify-center p-6">
-        <h2 className="font-semibold text-lg">{course.tenKhoaHoc}</h2>
+        <h2 className="font-semibold text-lg">{course.tenKH}</h2>
         <div>
           <p>
             <b>Người hướng dẫn: </b>

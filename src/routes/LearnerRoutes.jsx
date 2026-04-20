@@ -3,6 +3,7 @@ import LearnerLayout from "../layouts/learnerLayouts/LearnerLayout";
 import LearnerCourseLayout from "../layouts/learnerLayouts/LearnerCourseLayout";
 import LearnerRoadmapLayout from "../layouts/learnerLayouts/LearnerRoadmapLayout";
 import LearnerPeopleLayout from "../layouts/learnerLayouts/LearnerPeopleLayout";
+import LearnerAccountLayout from "../layouts//learnerLayouts/LearnerAccountLayout";
 
 import LearnerCoursePage from "../pages/learner/course/LearnerCoursePage";
 import MyCoursePage from "../pages/learner/course/MyCoursePage";
@@ -18,10 +19,15 @@ import AllRoadmapPage from "../pages/learner/roadmap/AllRoadmapPage";
 import PeoplePage from "../pages/learner/people/PeoplePage";
 import MessagePage from "../pages/learner/people/MessagePage";
 
+import LearnerProfilePage from "../pages/profiles/LearnerProfilePage";
+
 export default function LearnerRoutes() {
   return (
     <Routes>
       <Route element={<LearnerLayout />}>
+        <Route path="profile" element={<LearnerAccountLayout />}>
+          <Route path="detail" element={<LearnerProfilePage />} />
+        </Route>
         <Route path="course" element={<LearnerCourseLayout />}>
           <Route path="all" element={<LearnerCoursePage />} />
           <Route path="all/demo/:khoaHocID" element={<DemoCoursePage />} />

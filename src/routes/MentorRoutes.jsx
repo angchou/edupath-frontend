@@ -22,10 +22,13 @@ import CreateRoadmapPage from "../pages/mentor/CreateRoadmapPage";
 import MessagePage from "../pages/learner/people/MessagePage";
 import PeoplePage from "../pages/learner/people/PeoplePage";
 
+import MentorProfilePage from "../pages/profiles/MentorProfilePage";
+
 export default function MentorRoutes() {
   return (
     <Routes>
       <Route element={<MentorLayout />}>
+        <Route path="profile" element={<MentorProfilePage />} />
         <Route path="course" element={<MentorCourseLayout />}>
           <Route path="all" element={<LearnerCoursePage />} />
           <Route path="all/demo/:khoaHocID" element={<DemoCoursePage />} />
