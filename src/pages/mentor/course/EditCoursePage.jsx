@@ -425,7 +425,7 @@ export default function EditCoursePage() {
                           </div>
                           <div
                             key={index}
-                            className="tiptap text-justify p-3 pl-6 border-l-5 border-green-600"
+                            className="tiptap text-justify p-3 pl-6 border-l-5 border-green-600 mt-5"
                             dangerouslySetInnerHTML={{
                               __html: DOMPurify.sanitize(block.text),
                             }}

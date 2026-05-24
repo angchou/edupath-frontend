@@ -93,7 +93,7 @@ export default function ApproveCoursePage() {
         <div className="p-6 max-h-[75vh] overflow-y-auto">
           <div className="grid grid-cols-1 xl:grid-cols-4 3xl:grid-cols-5 gap-3">
             {courses.length === 0 ? (
-              <div className="col-span-4 text-center italic text-gray-400">
+              <div className="col-span-5 text-center italic text-gray-400">
                 Không có khóa học nào để phê duyệt
               </div>
             ) : (
