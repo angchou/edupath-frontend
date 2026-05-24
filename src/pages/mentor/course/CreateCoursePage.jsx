@@ -109,16 +109,15 @@ export default function CreateCoursePage() {
                     {course.moTa}
                   </p>
 
-                  <div className="flex justify-between">
-                    <p>
-                      <b>Loại khóa học: </b>
-                      {course.loaiKH == 0 ? "Du học" : "CV"}
-                    </p>
-                    <p className="flex items-center gap-2">
-                      <b>Thời hạn: </b>
-                      {course.thoiHan} tháng
-                    </p>
-                  </div>
+                  <p>
+                    <b>Loại khóa học: </b>
+                    {course.loaiKH == 0 ? "Du học" : "CV"}
+                  </p>
+
+                  <p className="flex items-center gap-2">
+                    <b>Thời hạn: </b>
+                    {course.thoiHan} tháng
+                  </p>
 
                   <p>
                     <b>Giá bán: </b>
