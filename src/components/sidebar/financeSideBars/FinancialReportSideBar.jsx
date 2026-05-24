@@ -28,35 +28,7 @@ export default function FinancialReportSideBar() {
           }
         >
           <ScrollText size={20} />
-          <span className="font-medium">Báo cáo doanh thu</span>
-        </NavLink>
-
-        <NavLink
-          to="/finance/report/mentor_revenue"
-          className={({ isActive }) =>
-            `${baseStyle} ${
-              isActive
-                ? "bg-blue-50 text-blue-600"
-                : "text-gray-600 hover:bg-gray-50"
-            }`
-          }
-        >
-          <ContactRound size={20} className="shrink-0" />
-          <span className="font-medium">Báo cáo doanh thu người hướng dẫn</span>
-        </NavLink>
-
-        <NavLink
-          to="/finance/report/course"
-          className={({ isActive }) =>
-            `${baseStyle} ${
-              isActive
-                ? "bg-blue-50 text-blue-600"
-                : "text-gray-600 hover:bg-gray-50"
-            }`
-          }
-        >
-          <Notebook size={20} />
-          <span className="font-medium">Thống kê số khóa học</span>
+          <span className="font-medium">Báo cáo tài chính</span>
         </NavLink>
       </nav>
     </div>

@@ -1,7 +1,21 @@
 import { NavLink, Link } from "react-router-dom";
 import { User } from "lucide-react";
 
+import { useState, useMemo } from "react";
+import NotificationBell from "../notification/NotificationBell";
+import NotificationDropdown from "../notification/NotificationDropdown";
+
+import { useNotifications } from "../../hooks/useNotifications";
+
 export default function LearnerNavigationBar() {
+  const { notifications, setNotifications } = useNotifications(
+    localStorage.getItem("userID"),
+  );
+
+  const unreadCount = useMemo(() => {
+    return notifications.length;
+  }, [notifications]);
+
   const items = [
     { id: "course", label: "Khóa học", path: "/learner/course" },
     { id: "roadmap", label: "Lộ trình", path: "/learner/roadmap" },
@@ -9,8 +23,10 @@ export default function LearnerNavigationBar() {
     { id: "support", label: "Hỗ trợ", path: "/learner/support" },
   ];
 
+  const [open, setOpen] = useState(false);
+
   return (
-    <nav className="bg-white shadow-md px-6 py-3 flex items-center justify-between mb-10">
+    <nav className="bg-white shadow-md px-6 py-3 flex items-center justify-between mb-2">
       <div className="flex items-center gap-8">
         <div className="w-10 h-10 bg-gray-200 rounded-lg flex items-center justify-center"></div>
       </div>
@@ -34,8 +50,21 @@ export default function LearnerNavigationBar() {
       </div>
 
       <div className="flex items-center gap-4">
-        <Link to={"/learner/profile/detail"}>
-          <div className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center cursor-pointer hover:bg-gray-300 transition">
+        <div className="relative">
+          <NotificationBell
+            count={unreadCount}
+            onClick={() => setOpen(!open)}
+          />
+
+          {open && (
+            <NotificationDropdown
+              notifications={notifications}
+              setNotifications={setNotifications}
+            />
+          )}
+        </div>
+        <Link to={"/learner/profile"}>
+          <div className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center cursor-pointer hover:bg-gray-200 hover:text-blue-500 transition">
             <User size={20} />
           </div>
         </Link>

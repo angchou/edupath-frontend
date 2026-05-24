@@ -1,113 +1,163 @@
 import SearchBar from "../../../components/SearchBar";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 import { Eye, X, Plus } from "lucide-react";
 import { FaCode } from "react-icons/fa";
 import { IoTicketSharp } from "react-icons/io5";
 
+import {
+  getWaitingTickets,
+  getNearExpiredTicket,
+  closeTicket,
+  rejectTicket,
+} from "../../../services/ticketService";
+
+import { useToast } from "../../../contexts/ToastContext";
+
 export default function TicketPage() {
-  const tickets = [
-    {
-      ticketID: "T001",
-      moTa: "Đây là dòng mô tả ticket Đây là dòng mô tả ticket Đây là dòng mô tả ticket Đây là dòng mô tả ticket Đây là dòng mô tả ticket",
-      loaiTicket: "tài chính",
-      ngayTao: "<ngày tạo>",
-      ngayHetHan: "<ngày hết hạn>",
-      trangThai: "chưa xử lý",
-      nguoiTao: "U0001",
-    },
-    {
-      ticketID: "T002",
-      moTa: "Đây là dòng mô tả ticket",
-      loaiTicket: "hỗ trợ",
-      ngayTao: "<ngày tạo>",
-      ngayHetHan: "<ngày hết hạn>",
-      trangThai: "chưa xử lý",
-      nguoiTao: "U0002",
-    },
-    {
-      ticketID: "T003",
-      moTa: "Lỗi không đăng nhập được hệ thống",
-      loaiTicket: "lỗi",
-      ngayTao: "<ngày tạo>",
-      ngayHetHan: "<ngày hết hạn>",
-      trangThai: "đang xử lý",
-      nguoiTao: "U0003",
-    },
-    {
-      ticketID: "T004",
-      moTa: "Yêu cầu cấp quyền admin",
-      loaiTicket: "yêu cầu",
-      ngayTao: "<ngày tạo>",
-      ngayHetHan: "<ngày hết hạn>",
-      trangThai: "chưa xử lý",
-      nguoiTao: "U0004",
-    },
-    {
-      ticketID: "T005",
-      moTa: "Giao diện hiển thị bị lỗi trên mobile",
-      loaiTicket: "lỗi",
-      ngayTao: "<ngày tạo>",
-      ngayHetHan: "<ngày hết hạn>",
-      trangThai: "đã xử lý",
-      nguoiTao: "U0005",
-    },
-    {
-      ticketID: "T006",
-      moTa: "Cần hỗ trợ reset mật khẩu",
-      loaiTicket: "hỗ trợ",
-      ngayTao: "<ngày tạo>",
-      ngayHetHan: "<ngày hết hạn>",
-      trangThai: "đang xử lý",
-      nguoiTao: "U0006",
-    },
-    {
-      ticketID: "T007",
-      moTa: "Đề xuất thêm chức năng báo cáo",
-      loaiTicket: "đề xuất",
-      ngayTao: "<ngày tạo>",
-      ngayHetHan: "<ngày hết hạn>",
-      trangThai: "chưa xử lý",
-      nguoiTao: "U0007",
-    },
-  ];
+  const { addToast } = useToast();
+
+  const [tickets, setTickets] = useState([]);
 
   const [selectedTicket, setSelectedTicket] = useState(null);
   const [openModal, setOpenModal] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [priority, setPriority] = useState("");
 
+  const [activeTab, setActiveTab] = useState("waiting");
+
+  const reFetch = async () => {
+    if (activeTab === "waiting") {
+      await fetchWaitingTicket();
+    } else if (activeTab === "near_expired") {
+      await fetchNearExpiredTicket();
+    }
+  };
+
+  const handleTabClick = async (type, fetchFunction) => {
+    setActiveTab(type);
+    await fetchFunction();
+  };
+
+  const getTicketStatus = (status) => {
+    if (status == 0) {
+      return "Chờ xử lý";
+    } else if (status == 1) {
+      return "Đã xử lý";
+    } else if (status == 2) {
+      return "Đã từ chối";
+    }
+  };
+
+  const getTicketType = (type) => {
+    if (type == 1) {
+      return "Khóa học";
+    } else if (type == 2) {
+      return "Tài chính";
+    } else if (type == 3) {
+      return "Người dùng";
+    } else if (type == 4) {
+      return "Hệ thống";
+    }
+  };
+
+  const getDoUuTien = (d) => {
+    if (d == 1) {
+      return "Cấp thiết";
+    } else if (d == 2) {
+      return "Cao";
+    } else if (d == 3) {
+      return "Trung bình";
+    } else if (d == 4) {
+      return "Thấp";
+    }
+  };
+
   const filteredEmployees = tickets.filter((ticket) => {
     const keyword = searchTerm.toLowerCase();
 
     return (
       ticket.ticketID.toLowerCase().includes(keyword) ||
-      ticket.loaiTicket.toLowerCase().includes(keyword)
+      ticket.nguoiTao.toLowerCase().includes(keyword) ||
+      getTicketType(ticket.loaiTicket).toLowerCase().includes(keyword) ||
+      getDoUuTien(ticket.doUuTien).toLowerCase().includes(keyword)
     );
   });
 
+  const fetchWaitingTicket = async () => {
+    const data = await getWaitingTickets();
+    setTickets(data);
+  };
+  const fetchNearExpiredTicket = async () => {
+    const data = await getNearExpiredTicket();
+    setTickets(data);
+  };
+  useEffect(() => {
+    fetchWaitingTicket();
+  }, []);
+
+  const handleCloseTicket = async () => {
+    const res = await closeTicket(selectedTicket?.ticketID);
+    if (!res) {
+      addToast("Đã có lỗi xảy ra, vui lòng thử lại", "error");
+      return;
+    }
+    setOpenModal(false);
+    reFetch();
+    addToast("Xử lý thành công", "success");
+  };
+  const handleRejectTicket = async () => {
+    const res = await rejectTicket(selectedTicket?.ticketID);
+    if (!res) {
+      addToast("Đã có lỗi xảy ra, vui lòng thử lại", "error");
+      return;
+    }
+    setOpenModal(false);
+    reFetch();
+    addToast("Từ chối thành công", "success");
+  };
+
   return (
-    <div className="flex flex-col bg-gray-50 font-sans">
-      <div className="p-5 flex-1 flex flex-col overflow-hidden">
+    <div className="flex h-[90vh] flex-col font-sans">
+      <div className="flex-1 flex flex-col overflow-hidden">
         <header className="md:h-16 bg-white border-b border-gray-200 flex flex-col md:flex-row md:items-center md:justify-between gap-3 px-4 md:px-8 py-3">
-          <h2 className="text-lg md:text-xl font-semibold text-gray-800">
-            Xử lý ticket
-          </h2>
+          <p className="text-sm text-gray-500">
+            Tổng cộng {tickets.length} ticket
+          </p>
+          <SearchBar
+            label="Tìm kiếm ticket"
+            value={searchTerm}
+            onChange={(value) => setSearchTerm(value)}
+          />
+          <div className="flex flex-wrap gap-2 text-sm">
+            <button
+              onClick={() => handleTabClick("waiting", fetchWaitingTicket)}
+              className={`border p-2 transition ${
+                activeTab === "waiting"
+                  ? "bg-blue-500 text-white scale-95"
+                  : "text-blue-500 hover:text-white hover:bg-blue-500"
+              }`}
+            >
+              Ticket đang chờ
+            </button>
+
+            <button
+              onClick={() =>
+                handleTabClick("near_expired", fetchNearExpiredTicket)
+              }
+              className={`border p-2 transition ${
+                activeTab === "near_expired"
+                  ? "bg-blue-500 text-white scale-95"
+                  : "text-blue-500 hover:text-white hover:bg-blue-500"
+              }`}
+            >
+              Ticket gần quá hạn
+            </button>
+          </div>
         </header>
 
-        <main className="flex-1 p-4 md:p-8">
-          <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-3 mb-6">
-            <p className="text-sm text-gray-500">
-              Tổng cộng {tickets.length} ticket cần được xử lý
-            </p>
-            <SearchBar
-              label="Tìm kiếm ticket"
-              value={searchTerm}
-              onChange={(value) => setSearchTerm(value)}
-            />
-          </div>
-
-          <div className="h-full bg-white rounded-xl shadow-sm border border-gray-100 overflow-x-auto">
+        <main className="flex-1 p-4 md:p-2">
+          <div className="h-full bg-white shadow-sm border border-gray-100 overflow-x-auto">
             <div className="max-h-[50vh] overflow-y-auto">
               <table className="w-full min-w-[700px] text-left">
                 <thead className="bg-gray-50 border-b border-gray-100 sticky top-0 z-10">
@@ -120,6 +170,9 @@ export default function TicketPage() {
                     </th>
                     <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase">
                       Loại ticket
+                    </th>
+                    <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase">
+                      Độ ưu tiên
                     </th>
                     <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase">
                       ngày tạo
@@ -149,7 +202,11 @@ export default function TicketPage() {
                         </td>
 
                         <td className="px-6 py-4 text-sm text-gray-600">
-                          {ticket.loaiTicket}
+                          {getTicketType(ticket.loaiTicket)}
+                        </td>
+
+                        <td className="px-6 py-4 text-sm text-gray-600">
+                          {getDoUuTien(ticket.doUuTien)}
                         </td>
 
                         <td className="px-6 py-4 text-sm text-gray-600">
@@ -177,10 +234,10 @@ export default function TicketPage() {
                   ) : (
                     <tr>
                       <td
-                        colSpan={6}
+                        colSpan={7}
                         className="text-center py-10 text-gray-400 italic"
                       >
-                        Không tìm thấy nhân viên
+                        Không tìm thấy ticket
                       </td>
                     </tr>
                   )}
@@ -235,57 +292,23 @@ export default function TicketPage() {
                 <div className="flex gap-3">
                   <FaCode size={20} className="mt-1 text-red-500" />
                   <span className="font-bold">Trạng thái:</span>
-                  {selectedTicket?.trangThai}
+                  {getTicketStatus(selectedTicket?.trangThai)}
                 </div>
               </div>
             </div>
-
-            <div className="flex flex-col gap-3 mt-6">
-              <select
-                value={priority}
-                onChange={(e) => setPriority(e.target.value)}
-                className="w-full border-b-1 p-2 outline-none focus:border-blue-500"
+            <div className="flex gap-2 mt-5">
+              <button
+                onClick={handleCloseTicket}
+                className="w-full bg-blue-500 hover:bg-blue-600 transition p-2 text-white"
               >
-                <option value={0} disabled>
-                  Độ ưu tiên
-                </option>
-                <option value={3}>Thấp</option>
-                <option value={4}>Trung bình</option>
-                <option value={5}>Cao</option>
-                <option value={6}>Quan trọng</option>
-              </select>
-
-              <div className="grid grid-cols-2 gap-2">
-                <form className="flex flex-col gap-2">
-                  <input
-                    type="text"
-                    placeholder="Nội dung phản hồi"
-                    className="w-full border rounded-lg p-2 outline-none focus:border-blue-500"
-                    required
-                  />
-                  <button
-                    type="submit"
-                    className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition"
-                  >
-                    Xử lý
-                  </button>
-                </form>
-
-                <form className="flex flex-col gap-2">
-                  <input
-                    type="text"
-                    placeholder="Lý do chuyển tiếp"
-                    className="w-full border rounded-lg p-2 outline-none focus:border-blue-500"
-                    required
-                  />
-                  <button
-                    type="submit"
-                    className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition"
-                  >
-                    Chuyển tiếp
-                  </button>
-                </form>
-              </div>
+                Đã xử lý xong
+              </button>
+              <button
+                onClick={handleRejectTicket}
+                className="w-full bg-[#cf345a] hover:bg-[#c71c46] transition p-2 text-white"
+              >
+                Từ chối xử lý
+              </button>
             </div>
           </div>
         </div>

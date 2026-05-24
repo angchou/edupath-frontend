@@ -15,8 +15,15 @@ export const loginService = async (payload) => {
   }
 
   const data = await res.json();
-  localStorage.setItem("token", data.token);
 
+  localStorage.setItem("token", data.token);
+  const token = localStorage.getItem("token");
+  if (token) {
+    const decoded = jwtDecode(token);
+    const userId = decoded.sub;
+    console.log("UserID của bạn là:", userId);
+    localStorage.setItem("userID", userId);
+  }
   const decode = jwtDecode(localStorage.getItem("token"));
   const roles = decode.roles;
 

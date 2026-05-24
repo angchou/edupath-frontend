@@ -2,8 +2,11 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { registerService } from "../../services/authService";
 
+import { useToast } from "../../contexts/ToastContext";
+
 export default function RegisterPage() {
   const navigate = useNavigate();
+  const { addToast } = useToast();
 
   const [form, setForm] = useState({
     hoTen: "",
@@ -31,17 +34,32 @@ export default function RegisterPage() {
     e.preventDefault();
 
     const payload = buildPayload(form);
+    if (
+      !payload.email ||
+      !payload.email ||
+      !payload.password ||
+      !payload.reenter_password
+    ) {
+      addToast("Không được để trống thông tin đăng ký", "");
+      return;
+    }
     if (payload.password !== payload.reenter_password) {
-      alert("Mật khẩu không khớp!");
+      addToast("Mật khẩu nhập lại không khớp, vui lòng thử lại", "error");
       return;
     }
 
     const status = await registerService(payload);
     if (status) {
-      alert("Đăng ký thành công!");
       navigate("/auth/login");
+      addToast(
+        "Đăng ký thành công, vui lòng đăng nhập vào hệ thống",
+        "success",
+      );
     } else {
-      alert("Đăng ký thất bại");
+      addToast(
+        "Đăng ký thất bại, có vẻ đã xảy ra lỗi, vui lòng đăng ký lại",
+        "error",
+      );
     }
   };
 
@@ -61,7 +79,6 @@ export default function RegisterPage() {
               onChange={handleChange}
               placeholder="Nhập tên người dùng"
               className="w-full px-4 py-2 border-b-1 outline-none"
-              required
             />
           </div>
 
@@ -74,7 +91,6 @@ export default function RegisterPage() {
               onChange={handleChange}
               placeholder="Nhập email"
               className="w-full px-4 py-2 border-b-1 outline-none"
-              required
             />
           </div>
 
@@ -87,7 +103,6 @@ export default function RegisterPage() {
               onChange={handleChange}
               placeholder="Nhập mật khẩu"
               className="w-full px-4 py-2 border-b-1 outline-none"
-              required
             />
           </div>
 
@@ -102,7 +117,6 @@ export default function RegisterPage() {
               onChange={handleChange}
               placeholder="Nhập lại mật khẩu"
               className="w-full px-4 py-2 border-b-1 outline-none"
-              required
             />
           </div>
 

@@ -1,72 +1,87 @@
 import SearchBar from "../../../components/SearchBar";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
-import { Eye, X } from "lucide-react";
-import { FaUserCircle, FaCode, FaTag } from "react-icons/fa";
-import { MdEmail } from "react-icons/md";
+import { X, Eye, Info } from "lucide-react";
+import {
+  FaUserCircle,
+  FaCode,
+  FaTag,
+  FaMoneyBillWave,
+  FaStar,
+  FaGlobeAsia,
+  FaGraduationCap,
+  FaBook,
+} from "react-icons/fa";
+import { MdEmail, MdBlock } from "react-icons/md";
 import { FaGear } from "react-icons/fa6";
 import { IoCreate } from "react-icons/io5";
+import { useToast } from "../../../contexts/ToastContext";
+import { getCustomers } from "../../../services/customerService";
 
 export default function SearchCustomerPage() {
-  const customers = [
-    {
-      userID: "EMP001",
-      hoTen: "Nguyễn Văn A",
-      email: "vana@company.com",
-      roleID: 1,
-      ngayTao: "2024-10-12",
-    },
-    {
-      userID: "EMP002",
-      hoTen: "Trần Thị B",
-      email: "thib@company.com",
-      roleID: 1,
-      ngayTao: "2024-09-20",
-    },
-    {
-      userID: "EMP003",
-      hoTen: "Lê Văn C",
-      email: "vanc@company.com",
-      roleID: 2,
-      ngayTao: "2024-08-15",
-    },
-    {
-      userID: "EMP004",
-      hoTen: "Phạm Thị D",
-      email: "thid@company.com",
-      roleID: 1,
-      ngayTao: "2024-07-10",
-    },
-    {
-      userID: "EMP005",
-      hoTen: "Hoàng Văn E",
-      email: "vane@company.com",
-      roleID: 1,
-      ngayTao: "2024-06-05",
-    },
-    {
-      userID: "EMP006",
-      hoTen: "Đỗ Thị F",
-      email: "thif@company.com",
-      roleID: 1,
-      ngayTao: "2024-05-01",
-    },
-  ];
-
-  const getRoleName = (roleID) => {
-    switch (roleID) {
-      case 1:
-        return "Học viên";
-      case 2:
-        return "Người hướng dẫn";
-      default:
-        return "Không rõ";
-    }
-  };
-
+  const [customers, setCustomers] = useState([]);
+  const { addToast } = useToast();
   const [selectedCustomer, setSelectedCustomer] = useState(null);
   const [openModal, setOpenModal] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
+  const [userCode, setUserCode] = useState("");
+
+  const fetchCustomers = async () => {
+    const data1 = await getCustomers(0);
+    const data2 = await getCustomers(1);
+    const data3 = await getCustomers(2);
+    setCustomers([...data1, ...data2, ...data3]);
+  };
+
+  useEffect(() => {
+    fetchCustomers();
+  }, []);
+
+  const getTrangThai = (trangThai) => {
+    switch (trangThai) {
+      case 0:
+        return (
+          <span className="px-2 py-1 rounded-sm text-xs font-semibold bg-gray-100 text-gray-600 border border-gray-200">
+            Đã bị xóa
+          </span>
+        );
+      case 1:
+        return (
+          <span className="px-2 py-1 rounded-sm text-xs font-semibold bg-red-100 text-red-600 border border-red-200">
+            Đã bị chặn
+          </span>
+        );
+      case 2:
+        return (
+          <span className="px-2 py-1 rounded-sm text-xs font-semibold bg-green-100 text-green-700 border border-green-200">
+            Bình thường
+          </span>
+        );
+      default:
+        return (
+          <span className="px-2 py-1 rounded-sm text-xs font-semibold bg-yellow-100 text-yellow-700">
+            Không xác định
+          </span>
+        );
+    }
+  };
+
+  const handleClose = () => {
+    setSelectedCustomer(null);
+    setOpenModal(false);
+    setUserCode("");
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    if (userCode !== selectedCustomer.userID) {
+      addToast("Nhập lại mã người dùng không chính xác!");
+      return;
+    }
+
+    handleClose();
+  };
 
   const filteredEmployees = customers.filter((cus) => {
     const keyword = searchTerm.toLowerCase();
@@ -74,32 +89,27 @@ export default function SearchCustomerPage() {
     return (
       cus.userID.toLowerCase().includes(keyword) ||
       cus.hoTen.toLowerCase().includes(keyword) ||
-      cus.email.toLowerCase().includes(keyword)
+      cus.email.toLowerCase().includes(keyword) ||
+      cus.roleName.toLowerCase().includes(keyword)
     );
   });
 
   return (
-    <div className="flex flex-col bg-gray-50 font-sans">
-      <div className="p-5 flex-1 flex flex-col overflow-hidden">
+    <div className="flex h-[90vh] flex-col font-sans">
+      <div className="flex-1 flex flex-col overflow-hidden">
         <header className="md:h-16 bg-white border-b border-gray-200 flex flex-col md:flex-row md:items-center md:justify-between gap-3 px-4 md:px-8 py-3">
-          <h2 className="text-lg md:text-xl font-semibold text-gray-800">
-            Tìm kiếm khách hàng
-          </h2>
+          <p className="text-sm text-gray-500">
+            Tổng cộng {customers.length} khách hàng
+          </p>
+          <SearchBar
+            label="Tìm kiếm khách hàng"
+            value={searchTerm}
+            onChange={(value) => setSearchTerm(value)}
+          />
         </header>
 
-        <main className="flex-1 p-4 md:p-8">
-          <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-3 mb-6">
-            <p className="text-sm text-gray-500">
-              Tổng cộng {customers.length} khách hàng
-            </p>
-            <SearchBar
-              label="Tìm kiếm nhân viên"
-              value={searchTerm}
-              onChange={(value) => setSearchTerm(value)}
-            />
-          </div>
-
-          <div className="h-full bg-white rounded-xl shadow-sm border border-gray-100 overflow-x-auto">
+        <main className="flex-1 p-4 md:p-2">
+          <div className="h-full bg-white border border-gray-100 overflow-x-auto">
             <div className="max-h-[50vh] overflow-y-auto">
               <table className="w-full min-w-[700px] text-left">
                 <thead className="bg-gray-50 border-b border-gray-100 sticky top-0 z-10">
@@ -118,6 +128,9 @@ export default function SearchCustomerPage() {
                     </th>
                     <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase">
                       Ngày tạo
+                    </th>
+                    <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase">
+                      Trạng thái
                     </th>
                     <th className="px-6 py-4"></th>
                   </tr>
@@ -145,11 +158,15 @@ export default function SearchCustomerPage() {
                         </td>
 
                         <td className="px-6 py-4 text-sm text-gray-600">
-                          {getRoleName(cus.roleID)}
+                          {cus.roleName}
                         </td>
 
                         <td className="px-6 py-4 text-sm text-gray-600">
                           {cus.ngayTao}
+                        </td>
+
+                        <td className="px-6 py-4 text-sm text-gray-600">
+                          {getTrangThai(cus.trangThai)}
                         </td>
 
                         <td className="px-6 py-4 text-right">
@@ -172,7 +189,7 @@ export default function SearchCustomerPage() {
                         colSpan={6}
                         className="text-center py-10 text-gray-400 italic"
                       >
-                        Không tìm thấy nhân viên
+                        Không tìm thấy người dùng
                       </td>
                     </tr>
                   )}
@@ -185,43 +202,136 @@ export default function SearchCustomerPage() {
 
       {openModal && (
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-          <div className="bg-white w-full max-w-md rounded-xl shadow-lg p-6 relative">
+          <div className="bg-white w-full max-w-md shadow-lg p-6 relative">
             <button
-              onClick={() => setOpenModal(false)}
+              onClick={handleClose}
               className="absolute top-3 right-3 text-gray-500 hover:text-black"
             >
               <X size={20} />
             </button>
-            <h2 className="text-xl font-semibold mb-5 mt-4">
+
+            <h2 className="text-xl font-semibold mb-5 mt-4 text-center">
               Thông tin khách hàng
             </h2>
+
             <div className="h-full flex flex-col items-center justify-center">
-              <FaUserCircle className="size-12" />
-              <div className="mt-5 w-full flex flex-col gap-2">
-                <div className="flex gap-3">
-                  <FaCode size={20} className="mt-1 text-yellow-500" />
-                  <span className="font-bold">Mã khách hàng:</span>
-                  {selectedCustomer?.userID}
+              <FaUserCircle className="size-16 text-gray-400" />
+
+              <div className="mt-5 w-full flex flex-col gap-3 text-sm text-gray-700">
+                <div className="flex gap-3 items-center">
+                  <FaCode size={18} className="text-yellow-500 shrink-0" />
+                  <span className="font-bold w-36">Mã khách hàng:</span>
+                  <span>{selectedCustomer?.userID}</span>
                 </div>
-                <div className="flex gap-3">
-                  <FaTag size={20} className="mt-1 text-blue-500" />
-                  <span className="font-bold">Họ và tên:</span>
-                  {selectedCustomer?.hoTen}
+
+                <div className="flex gap-3 items-center">
+                  <FaTag size={18} className="text-blue-500 shrink-0" />
+                  <span className="font-bold w-36">Họ và tên:</span>
+                  <span>{selectedCustomer?.hoTen}</span>
                 </div>
-                <div className="flex gap-3">
-                  <MdEmail size={20} className="mt-1 text-red-600" />
-                  <span className="font-bold">Email:</span>
-                  {selectedCustomer?.email}
+
+                <div className="flex gap-3 items-center">
+                  <MdEmail size={18} className="text-red-600 shrink-0" />
+                  <span className="font-bold w-36">Email:</span>
+                  <span className="break-all">{selectedCustomer?.email}</span>
                 </div>
-                <div className="flex gap-3">
-                  <FaGear size={20} className="mt-1 rotate-5 text-gray-500" />
-                  <span className="font-bold">Vai trò:</span>
-                  {getRoleName(selectedCustomer?.roleID)}
+
+                <div className="flex gap-3 items-center">
+                  <FaGear
+                    size={18}
+                    className="rotate-45 text-gray-500 shrink-0"
+                  />
+                  <span className="font-bold w-36">Vai trò:</span>
+                  <span
+                    className={`px-2 py-0.5 rounded text-xs font-semibold ${
+                      selectedCustomer?.roleName === "Mentor"
+                        ? "bg-purple-100 text-purple-700"
+                        : "bg-green-100 text-green-700"
+                    }`}
+                  >
+                    {selectedCustomer?.roleName}
+                  </span>
                 </div>
-                <div className="flex gap-3">
-                  <IoCreate size={20} className="mt-1 -rotate-5" />
-                  <span className="font-bold">Ngày tạo tài khoản:</span>
-                  {selectedCustomer?.ngayTao}
+
+                <div className="flex gap-3 items-center">
+                  <IoCreate
+                    size={18}
+                    className="-rotate-5 text-amber-700 shrink-0"
+                  />
+                  <span className="font-bold w-36">Ngày tạo tài khoản:</span>
+                  <span>{selectedCustomer?.ngayTao}</span>
+                </div>
+
+                <div className="flex gap-3 items-center">
+                  <Info
+                    size={18}
+                    className="-rotate-5 text-orange-500 shrink-0"
+                  />
+                  <span className="font-bold w-36">Trạng thái:</span>
+                  <span>{getTrangThai(selectedCustomer?.trangThai)}</span>
+                </div>
+
+                <div className="border-t border-gray-100 my-1"></div>
+
+                {selectedCustomer?.roleName === "Người hướng dẫn" && (
+                  <>
+                    <div className="flex gap-3 items-center">
+                      <FaMoneyBillWave
+                        size={18}
+                        className="text-emerald-600 shrink-0"
+                      />
+                      <span className="font-bold w-36">Doanh thu:</span>
+                      <span className="text-emerald-600 font-semibold">
+                        {selectedCustomer?.doanhThu?.toLocaleString("vi-VN")} đ
+                      </span>
+                    </div>
+                    <div className="flex gap-3 items-center">
+                      <FaStar size={18} className="text-orange-400 shrink-0" />
+                      <span className="font-bold w-36">
+                        Đánh giá trung bình:
+                      </span>
+                      <span>{selectedCustomer?.trungBinhDanhGia} / 5</span>
+                    </div>
+                  </>
+                )}
+
+                {selectedCustomer?.roleName === "Học viên" && (
+                  <>
+                    <div className="flex gap-3 items-center">
+                      <FaGlobeAsia
+                        size={18}
+                        className="text-teal-500 shrink-0"
+                      />
+                      <span className="font-bold w-36">Quốc gia du học:</span>
+                      <span>
+                        {selectedCustomer?.quocGiaDuHoc || "Chưa cập nhật"}
+                      </span>
+                    </div>
+                    <div className="flex gap-3 items-center">
+                      <FaGraduationCap
+                        size={18}
+                        className="text-indigo-500 shrink-0"
+                      />
+                      <span className="font-bold w-36">Điểm GPA:</span>
+                      <span>{selectedCustomer?.gpa || "Chưa cập nhật"}</span>
+                    </div>
+                    <div className="flex gap-3 items-center">
+                      <FaBook size={18} className="text-pink-500 shrink-0" />
+                      <span className="font-bold w-36">Ngành học:</span>
+                      <span>
+                        {selectedCustomer?.nganhHoc || "Chưa cập nhật"}
+                      </span>
+                    </div>
+                  </>
+                )}
+                <div className="mt-6">
+                  <button
+                    type="button"
+                    className="w-full bg-blue-500 py-2 text-sm text-white font-medium hover:bg-blue-600 transition"
+                    onClick={handleClose}
+                  >
+                    Hủy
+                  </button>
                 </div>
               </div>
             </div>

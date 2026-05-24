@@ -1,9 +1,10 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import LearnerLayout from "../layouts/learnerLayouts/LearnerLayout";
 import LearnerCourseLayout from "../layouts/learnerLayouts/LearnerCourseLayout";
 import LearnerRoadmapLayout from "../layouts/learnerLayouts/LearnerRoadmapLayout";
 import LearnerPeopleLayout from "../layouts/learnerLayouts/LearnerPeopleLayout";
 import LearnerAccountLayout from "../layouts//learnerLayouts/LearnerAccountLayout";
+import LearnerSupportLayout from "../layouts/learnerLayouts/LearnerSupportLayout";
 
 import LearnerCoursePage from "../pages/learner/course/LearnerCoursePage";
 import MyCoursePage from "../pages/learner/course/MyCoursePage";
@@ -20,15 +21,25 @@ import PeoplePage from "../pages/learner/people/PeoplePage";
 import MessagePage from "../pages/learner/people/MessagePage";
 
 import LearnerProfilePage from "../pages/profiles/LearnerProfilePage";
+import RegisterMentorPage from "../pages/learner/account/RegisterMentorPage";
+import LearnerTransactionPage from "../pages/learner/LearnerTransactionPage";
+
+import LearnerSupportPage from "../pages/learner/LearnerSupportPage";
 
 export default function LearnerRoutes() {
   return (
     <Routes>
       <Route element={<LearnerLayout />}>
         <Route path="profile" element={<LearnerAccountLayout />}>
+          <Route index element={<Navigate to="detail" replace />} />
+
           <Route path="detail" element={<LearnerProfilePage />} />
+          <Route path="transaction" element={<LearnerTransactionPage />} />
+          <Route path="mentor_reg" element={<RegisterMentorPage />} />
         </Route>
         <Route path="course" element={<LearnerCourseLayout />}>
+          <Route index element={<Navigate to="my_course" replace />} />
+
           <Route path="all" element={<LearnerCoursePage />} />
           <Route path="all/demo/:khoaHocID" element={<DemoCoursePage />} />
           <Route path="paycheck/:khoaHocID" element={<PaycheckPage />} />
@@ -40,13 +51,22 @@ export default function LearnerRoutes() {
           <Route path="roadmap" element={<RoadmapPage />} />
         </Route>
         <Route path="roadmap" element={<LearnerRoadmapLayout />}>
+          <Route index element={<Navigate to="my_road" replace />} />
+
           <Route path="all" element={<AllRoadmapPage />} />
           <Route path="my_road" element={<RoadmapPage />} />
           <Route path="edit" element={<EditRoadmapPage />} />
         </Route>
         <Route path="people" element={<LearnerPeopleLayout />}>
+          <Route index element={<Navigate to="message" replace />} />
+
           <Route path="all" element={<PeoplePage />} />
           <Route path="message" element={<MessagePage />} />
+        </Route>
+        <Route path="support" element={<LearnerSupportLayout />}>
+          <Route index element={<Navigate to="create" replace />} />
+
+          <Route path="create" element={<LearnerSupportPage />} />
         </Route>
       </Route>
     </Routes>

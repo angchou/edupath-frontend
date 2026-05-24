@@ -12,7 +12,7 @@ export default function SupportNavigationBar() {
   ];
 
   return (
-    <nav className="bg-white shadow-md px-6 py-3 flex items-center justify-between mb-10">
+    <nav className="bg-white shadow-md px-6 py-3 flex items-center justify-between mb-2">
       <div className="flex items-center gap-8">
         <div className="w-10 h-10 bg-gray-200 rounded-lg flex items-center justify-center"></div>
       </div>
@@ -35,13 +35,13 @@ export default function SupportNavigationBar() {
         ))}
       </div>
 
-      <div className="flex items-center gap-4">
-        <div className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center cursor-pointer hover:bg-gray-300 transition">
-          <Link to={"/admin/employee"}>
+      <Link to={"/support/profile"}>
+        <div className="flex items-center gap-4">
+          <div className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center cursor-pointer hover:bg-gray-300 transition">
             <User size={20} />
-          </Link>
+          </div>
         </div>
-      </div>
+      </Link>
     </nav>
   );
 }

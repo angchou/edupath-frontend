@@ -1,81 +1,120 @@
-import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useEffect } from "react";
-import { getNormalCourses } from "../../../services/courseService";
+import { useState, useEffect, useRef } from "react";
 
-import SearchBar from "../../../components/SearchBar";
+import { Settings, Users } from "lucide-react";
 
+import AddCourseCard from "../../../components/course/AddCourseCard";
+import {
+  getMyCourses,
+  getNormalCourses,
+} from "../../../services/courseService";
 import SecureImage from "../../../components/SecureImage";
+import {
+  getCourseStatus,
+  getCourseStatusColor,
+} from "../../../utils/statusConfig";
+import {
+  ChangeCourseCoverPhoto,
+  ChangeCourseInformation,
+  RequestOpenCourse,
+} from "../../../components/course/mentorCourseSetting";
 
 export default function LearnerCoursePage() {
-  const [courses, setCourses] = useState([]);
-
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const data = await getNormalCourses();
-        setCourses(data);
-      } catch (err) {
-        console.log(err);
-      }
-    };
+  const [courses, setCourses] = useState([]);
+  const [selectedCourse, setSelectedCourse] = useState(null);
 
+  const fetchData = async () => {
+    try {
+      const allCourses = await getNormalCourses();
+
+      const finalCourses = allCourses
+        .filter((c) => c.userID !== localStorage.getItem("userID"))
+        .map((c) => ({
+          ...c,
+        }));
+
+      setCourses(finalCourses);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  useEffect(() => {
     fetchData();
   }, []);
 
   return (
-    <div className="flex flex-col bg-gray-50 font-sans">
-      <div className="p-5 flex-1 flex flex-col overflow-hidden">
-        <header className="md:h-20 bg-white border-b border-gray-200 flex flex-col md:flex-row md:items-center md:justify-between gap-3 px-4 md:px-8 py-3">
+    <div className="flex flex-col font-sans">
+      <div className="flex-1 flex flex-col overflow-hidden">
+        <header className="bg-white border-b border-gray-200 flex flex-col md:flex-row md:items-center md:justify-between gap-3 px-4 md:px-8 py-3">
           <h2 className="text-lg md:text-xl font-semibold text-gray-800">
             DANH SÁCH KHÓA HỌC
           </h2>
-          <SearchBar label="Tìm kiếm khóa học" />
         </header>
 
-        <div className="p-6 max-h-[75vh] overflow-y-auto">
-          <div className="h-full flex flex-col grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="p-2 max-h-[90vh] overflow-y-auto">
+          <div className="grid grid-cols-1 xl:grid-cols-4 3xl:grid-cols-5 gap-3">
             {courses.map((course) => (
               <div
                 key={course.khoaHocID}
-                className="bg-white rounded-2xl shadow hover:shadow-lg transition overflow-hidden flex flex-col h-full"
+                className="flex flex-col bg-white text-sm shadow hover:shadow-lg transition overflow-hidden"
               >
                 <div className="overflow-hidden">
                   <SecureImage
                     src={course.hinhAnh}
-                    className="w-full h-48 object-cover transform transition duration-300 hover:scale-110"
+                    className="w-full h-48 object-cover hover:scale-110 transition duration-450"
                   />
                 </div>
-                <div className="flex flex-col flex-1 p-6">
-                  <div className="flex-1">
-                    <h2 className="font-semibold text-lg">{course.tenKH}</h2>
+
+                <div className="flex flex-col justify-center p-6">
+                  <h2 className="font-bold text-lg mb-2">{course.tenKH}</h2>
+
+                  <p className="line-clamp-2">
+                    <b>Mô tả: </b>
+                    {course.moTa}
+                  </p>
+
+                  <div className="flex justify-between">
                     <p>
-                      <b>Người hướng dẫn: </b>
-                      {course.hoTen} - {course.userID}
+                      <b>Loại khóa học: </b>
+                      {course.loaiKH == 0 ? "Du học" : "CV"}
                     </p>
-                    <p className="line-clamp-2">
-                      <b>Mô tả: </b>
-                      {course.moTa}
-                    </p>
-                    <p>
-                      <b>Số lượng học viên: </b>
-                      {course.soLuongHocVien}
-                    </p>
-                    <p>
-                      <b>Giá bán: </b>
-                      {course.mucPhi} đồng
+                    <p className="flex items-center gap-2">
+                      <b>Thời hạn: </b>
+                      {course.thoiHan} tháng
                     </p>
                   </div>
 
-                  <div className="mt-auto">
-                    <button
-                      className="w-full bg-blue-500 hover:bg-blue-600 text-white text-center p-2 rounded-xl mt-5 font-semibold"
-                      onClick={() => navigate(`demo/${course.khoaHocID}`)}
-                    >
-                      Đăng ký khóa học
-                    </button>
+                  <p>
+                    <b>Giá bán: </b>
+                    {Number(course.mucPhi).toLocaleString("vi-VN")} đồng
+                  </p>
+
+                  <p>
+                    <b>Ngày tạo: </b>
+                    {course.ngayTao}
+                  </p>
+                  <p>
+                    <b>Số lượng học viên: </b>
+                    {course.slhvHienTai} / {course.slhv} học viên
+                  </p>
+                  <div className="flex gap-3 mt-5">
+                    <div className="group w-full">
+                      <button
+                        className="cursor-pointer w-full text-center p-2 font-semibold transition border-1 group-hover:text-white text-blue-500 group-hover:bg-blue-500"
+                        onClick={() => {
+                          course.daSoHuu
+                            ? navigate(`../my_course/${course.khoaHocID}`)
+                            : navigate(`demo/${course.khoaHocID}`);
+                        }}
+                      >
+                        {course.daSoHuu
+                          ? "Chi tiết khóa học"
+                          : "Xem thử khóa học"}
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>

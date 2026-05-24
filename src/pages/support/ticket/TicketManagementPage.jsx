@@ -1,61 +1,143 @@
 import SearchBar from "../../../components/SearchBar";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 import { Eye, X, Plus } from "lucide-react";
 import { FaCode } from "react-icons/fa";
 import { IoTicketSharp } from "react-icons/io5";
 
+import {
+  getClosedTicket,
+  getExpiredTicket,
+  getRejectedTicket,
+} from "../../../services/ticketService";
+
+import { useToast } from "../../../contexts/ToastContext";
+
 export default function TicketManagementPage() {
-  const tickets = [
-    {
-      ticketID: "T001",
-      doUuTien: 1,
-      moTa: "Đây là dòng mô tả ticket Đây là dòng mô tả ticket Đây là dòng mô tả ticket Đây là dòng mô tả ticket Đây là dòng mô tả ticket",
-      loaiTicket: "tài chính",
-      ngayTao: "<ngày tạo>",
-      ngayHetHan: "<ngày hết hạn>",
-      trangThai: "chưa xử lý",
-      chuyenTiep: "Đây là lí do chuyển tiếp cho phòng ban",
-      nguoiTao: "U0001",
-      nhanVienChuyenTiepID: "U1234",
-    },
-  ];
+  const { addToast } = useToast();
+
+  const [tickets, setTickets] = useState([]);
 
   const [selectedTicket, setSelectedTicket] = useState(null);
   const [openModal, setOpenModal] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
+  const [priority, setPriority] = useState("");
+
+  const [activeTab, setActiveTab] = useState("closed");
+
+  const reFetch = async () => {
+    if (activeTab === "closed") {
+      await fetchClosedTicket();
+    } else if (activeTab === "expired") {
+      await fetchExpiredTicket();
+    } else if (activeTab === "rejected") {
+      await fetchRejectedTicket();
+    }
+  };
+
+  const handleTabClick = async (type, fetchFunction) => {
+    setActiveTab(type);
+    await fetchFunction();
+  };
+
+  const getTicketStatus = (status) => {
+    if (status == 0) {
+      return "Chờ xử lý";
+    } else if (status == 1) {
+      return "Đã xử lý";
+    } else if (status == 2) {
+      return "Đã từ chối";
+    }
+  };
+
+  const getTicketType = (type) => {
+    if (type == 1) {
+      return "Khóa học";
+    } else if (type == 2) {
+      return "Tài chính";
+    } else if (type == 3) {
+      return "Người dùng";
+    } else if (type == 4) {
+      return "Hệ thống";
+    }
+  };
 
   const filteredEmployees = tickets.filter((ticket) => {
     const keyword = searchTerm.toLowerCase();
 
     return (
       ticket.ticketID.toLowerCase().includes(keyword) ||
-      ticket.loaiTicket.toLowerCase().includes(keyword)
+      getTicketType(ticket.loaiTicket).toLowerCase().includes(keyword)
     );
   });
 
+  const fetchClosedTicket = async () => {
+    const data = await getClosedTicket();
+    setTickets(data);
+  };
+  const fetchExpiredTicket = async () => {
+    const data = await getExpiredTicket();
+    setTickets(data);
+  };
+  const fetchRejectedTicket = async () => {
+    const data = await getRejectedTicket();
+    setTickets(data);
+  };
+  useEffect(() => {
+    fetchClosedTicket();
+  }, []);
+
   return (
-    <div className="flex flex-col bg-gray-50 font-sans">
-      <div className="p-5 flex-1 flex flex-col overflow-hidden">
+    <div className="flex h-[90vh] flex-col font-sans">
+      <div className="flex-1 flex flex-col overflow-hidden">
         <header className="md:h-16 bg-white border-b border-gray-200 flex flex-col md:flex-row md:items-center md:justify-between gap-3 px-4 md:px-8 py-3">
-          <h2 className="text-lg md:text-xl font-semibold text-gray-800">
-            Quản lý ticket
-          </h2>
+          <p className="text-sm text-gray-500">
+            Tổng cộng {tickets.length} ticket
+          </p>
+          <SearchBar
+            label="Tìm kiếm ticket"
+            value={searchTerm}
+            onChange={(value) => setSearchTerm(value)}
+          />
+
+          <div className="flex flex-wrap gap-3 text-sm">
+            <button
+              onClick={() => handleTabClick("closed", fetchClosedTicket)}
+              className={`border p-2 transition ${
+                activeTab === "closed"
+                  ? "bg-blue-500 text-white scale-95"
+                  : "text-blue-500 hover:text-white hover:bg-blue-500"
+              }`}
+            >
+              Ticket đã xử lý
+            </button>
+
+            <button
+              onClick={() => handleTabClick("rejected", fetchRejectedTicket)}
+              className={`border p-2 transition ${
+                activeTab === "rejected"
+                  ? "bg-blue-500 text-white scale-95"
+                  : "text-blue-500 hover:text-white hover:bg-blue-500"
+              }`}
+            >
+              Ticket đã từ chối
+            </button>
+
+            <button
+              onClick={() => handleTabClick("expired", fetchExpiredTicket)}
+              className={`border p-2 transition ${
+                activeTab === "expired"
+                  ? "bg-blue-500 text-white scale-95"
+                  : "text-blue-500 hover:text-white hover:bg-blue-500"
+              }`}
+            >
+              Ticket quá hạn
+            </button>
+          </div>
         </header>
 
-        <main className="flex-1 p-4 md:p-8">
-          <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-3 mb-6">
-            <p className="text-sm text-gray-500">
-              Tổng cộng {tickets.length} ticket cần được xử lý
-            </p>
-            <SearchBar
-              label="Tìm kiếm ticket"
-              value={searchTerm}
-              onChange={(value) => setSearchTerm(value)}
-            />
-          </div>
-
-          <div className="h-full bg-white rounded-xl shadow-sm border border-gray-100 overflow-x-auto">
+        <main className="flex-1 p-4 md:p-2">
+          <div className="h-full bg-white shadow-sm border border-gray-100 overflow-x-auto">
             <div className="max-h-[50vh] overflow-y-auto">
               <table className="w-full min-w-[700px] text-left">
                 <thead className="bg-gray-50 border-b border-gray-100 sticky top-0 z-10">
@@ -65,9 +147,6 @@ export default function TicketManagementPage() {
                     </th>
                     <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase">
                       Người tạo
-                    </th>
-                    <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase">
-                      Độ ưu tiên
                     </th>
                     <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase">
                       Loại ticket
@@ -100,11 +179,7 @@ export default function TicketManagementPage() {
                         </td>
 
                         <td className="px-6 py-4 text-sm text-gray-600">
-                          {ticket.doUuTien}
-                        </td>
-
-                        <td className="px-6 py-4 text-sm text-gray-600">
-                          {ticket.loaiTicket}
+                          {getTicketType(ticket.loaiTicket)}
                         </td>
 
                         <td className="px-6 py-4 text-sm text-gray-600">
@@ -135,7 +210,7 @@ export default function TicketManagementPage() {
                         colSpan={6}
                         className="text-center py-10 text-gray-400 italic"
                       >
-                        Không tìm thấy nhân viên
+                        Không tìm thấy ticket
                       </td>
                     </tr>
                   )}
@@ -182,55 +257,22 @@ export default function TicketManagementPage() {
                   {selectedTicket?.ngayHetHan}
                 </div>
                 <div className="flex gap-3">
+                  <Plus size={20} className="mt-1" />
+                  <span className="font-bold">Nhân viên xử lý:</span>
+                  {selectedTicket?.nhanVienXuLy}
+                </div>
+                <div className="flex gap-3">
                   <Plus size={20} className="mt-1 shrink-0" />
                   <span>
                     <b>Mô tả: </b> {selectedTicket.moTa}
                   </span>
                 </div>
                 <div className="flex gap-3">
-                  <Plus size={20} className="mt-1 shrink-0" />
-                  <span>
-                    <b>Lí do chuyển tiếp: </b> {selectedTicket.chuyenTiep}
-                  </span>
-                </div>
-                <div className="flex gap-3">
-                  <FaCode size={20} className="mt-1 text-red-500" />
-                  <span className="font-bold">Nhân viên chuyển tiếp:</span>
-                  {selectedTicket?.nhanVienChuyenTiepID}
-                </div>
-                <div className="flex gap-3">
                   <FaCode size={20} className="mt-1 text-red-500" />
                   <span className="font-bold">Trạng thái:</span>
-                  {selectedTicket?.trangThai}
+                  {getTicketStatus(selectedTicket?.trangThai)}
                 </div>
               </div>
-            </div>
-
-            <div className="grid grid-cols-1 gap-2 mt-6">
-              <form className="flex flex-col gap-2">
-                <select className="w-full border rounded-lg p-2 outline-none focus:border-blue-500">
-                  <option value={0} disabled>
-                    Ưu tiên
-                  </option>
-                  <option value={3}>Thấp</option>
-                  <option value={4}>trung bình</option>
-                  <option value={5}>Cao</option>
-                  <option value={6}>Quan trọng</option>
-                </select>
-                <input
-                  row={2}
-                  type="text"
-                  placeholder="Lý do chuyển tiếp"
-                  className="w-full border rounded-lg p-2 outline-none focus:border-blue-500 resize-none"
-                  required
-                />
-                <button
-                  type="submit"
-                  className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition"
-                >
-                  Chuyển tiếp
-                </button>
-              </form>
             </div>
           </div>
         </div>

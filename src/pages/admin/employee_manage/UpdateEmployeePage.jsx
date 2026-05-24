@@ -3,26 +3,33 @@ import { useState, useEffect } from "react";
 import { FaPencil } from "react-icons/fa6";
 
 import { Eye, EyeOff, X } from "lucide-react";
-import { getAllEmployees } from "../../../services/EmployeeService";
+import {
+  getAllEmployees,
+  updateEmployee,
+} from "../../../services/EmployeeService";
+
+import { useToast } from "../../../contexts/ToastContext";
 
 export default function UpdateEmployee() {
+  const { addToast } = useToast();
+
   const [employees, setEmployees] = useState([]);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const data = await getAllEmployees();
-        setEmployees(data);
-      } catch (err) {
-        console.log(err);
-      }
-    };
+  const fetchData = async () => {
+    try {
+      const data = await getAllEmployees();
+      setEmployees(data);
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
+  useEffect(() => {
     fetchData();
   }, []);
 
   const [selectedEmployee, setSelectedEmployee] = useState(null);
-  const [openModal, setOpenModal] = useState(false);
+  const [openUpdateEmployeeForm, setOpenUpdateEmployeeForm] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [seePassword, setSeePassword] = useState(false);
   const [form, setForm] = useState({
@@ -31,8 +38,10 @@ export default function UpdateEmployee() {
     email: "",
     password: "",
     reenter_password: "",
-    roleName: "",
+    roleID: 0,
     chucVu: "",
+    luongCoBan: 0,
+    luongPhuCap: 0,
   });
 
   const filteredEmployees = employees.filter((emp) => {
@@ -41,7 +50,8 @@ export default function UpdateEmployee() {
     return (
       emp.userID.toLowerCase().includes(keyword) ||
       emp.hoTen.toLowerCase().includes(keyword) ||
-      emp.email.toLowerCase().includes(keyword)
+      emp.email.toLowerCase().includes(keyword) ||
+      getRoleName(emp.roleID).toLowerCase().includes(keyword)
     );
   });
 
@@ -53,7 +63,9 @@ export default function UpdateEmployee() {
         password: selectedEmployee?.password || "",
         reenter_password: "",
         chucVu: selectedEmployee?.chucVu || "",
-        roleName: selectedEmployee?.roleName || "",
+        roleID: selectedEmployee?.roleID || 0,
+        luongCoBan: selectedEmployee?.luongCoBan || 0,
+        luongPhuCap: selectedEmployee?.luongPhuCap || 0,
       });
     }
   }, [selectedEmployee]);
@@ -62,70 +74,70 @@ export default function UpdateEmployee() {
     return {
       userID: selectedEmployee?.userID,
       hoTen: form?.hoTen,
-      email: form?.password,
+      email: form?.email,
       password: form?.password,
-      reenter_password: form?.reenter_password,
       chucVu: form?.chucVu,
-      roleName: form?.roleName,
+      roleID: form?.roleID,
+      luongCoBan: form?.luongCoBan,
+      luongPhuCap: form?.luongPhuCap,
     };
   };
 
   const handleClose = () => {
-    setForm({
-      userID: "",
-      hoTen: "",
-      email: "",
-      password: "",
-      reenter_password: "",
-      roleName: "",
-      chucVu: "",
-    });
-
     setSeePassword(false);
-    setOpenModal(false);
+    setOpenUpdateEmployeeForm(false);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     const payload = buildPayload();
-    console.log(payload);
-    if (
-      payload.password !== selectedEmployee.password &&
-      payload.password !== payload.reenter_password
-    ) {
-      alert("Password doesn't match");
+    if (form.reenter_password === "") {
+      addToast("Vui lòng nhập lại mật khẩu nhân viên!", "");
+      return;
+    }
+    if (payload.password !== form.reenter_password) {
+      addToast("Mật khẩu nhập lại không chính xác!", "");
       return;
     }
 
+    const data = await updateEmployee(payload);
+    if (data) {
+      addToast("Thay đổi thông tin nhân viên không thành công!", "error");
+    } else {
+      fetchData();
+      addToast("Thay đổi thông tin nhân viên thành công!", "success");
+    }
     handleClose();
-
-    payload.reenter_password = payload.password;
-    console.log(payload);
   };
+
+  const getRoleName = (id) => {
+    if (id == 3) {
+      return "Hỗ trợ";
+    } else if (id == 4) {
+      return "Đảm bảo chất lượng";
+    } else if (id == 5) {
+      return "Tài chính";
+    } else return "Quản trị viên";
+  };
+
   return (
-    <div className="flex flex-col bg-gray-50 font-sans">
-      <div className="p-5 flex-1 flex flex-col overflow-hidden">
+    <div className="flex h-[90vh] flex-col font-sans">
+      <div className="flex-1 flex flex-col overflow-hidden">
         <header className="md:h-16 bg-white border-b border-gray-200 flex flex-col md:flex-row md:items-center md:justify-between gap-3 px-4 md:px-8 py-3">
-          <h2 className="text-lg md:text-xl font-semibold text-gray-800">
-            Cập nhật thông tin nhân viên<nav></nav>
-          </h2>
+          <p className="text-sm text-gray-500">
+            Tổng cộng {employees.length} nhân viên
+          </p>
+          <SearchBar
+            label="Tìm kiếm nhân viên"
+            value={searchTerm}
+            onChange={(value) => setSearchTerm(value)}
+          />
         </header>
 
-        <main className="flex-1 p-4 md:p-8">
-          <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-3 mb-6">
-            <p className="text-sm text-gray-500">
-              Tổng cộng {employees.length} nhân viên
-            </p>
-            <SearchBar
-              label="Tìm kiếm nhân viên"
-              value={searchTerm}
-              onChange={(value) => setSearchTerm(value)}
-            />
-          </div>
-
-          <div className="h-full bg-white rounded-xl shadow-sm border border-gray-100 overflow-x-auto">
-            <div className="max-h-[50vh] overflow-y-auto">
+        <main className="flex-1 p-4 md:p-2">
+          <div className="h-full bg-white border border-gray-100 overflow-x-auto">
+            <div className="max-h-[85vh] overflow-y-auto">
               <table className="w-full min-w-[700px] text-left">
                 <thead className="bg-gray-50 border-b border-gray-100 sticky top-0 z-10">
                   <tr>
@@ -170,7 +182,7 @@ export default function UpdateEmployee() {
                         </td>
 
                         <td className="px-6 py-4 text-sm text-gray-600">
-                          {emp.roleName}
+                          {getRoleName(emp.roleID)}
                         </td>
 
                         <td className="px-6 py-4 text-sm text-gray-600">
@@ -181,7 +193,7 @@ export default function UpdateEmployee() {
                           <button
                             className="flex items-center gap-1 text-[#14b83a] hover:text-[#0b9e2d] hover:scale-110 text-sm font-medium transition"
                             onClick={() => {
-                              setOpenModal(true);
+                              setOpenUpdateEmployeeForm(true);
                               setSelectedEmployee(emp);
                             }}
                           >
@@ -208,9 +220,9 @@ export default function UpdateEmployee() {
         </main>
       </div>
 
-      {openModal && (
+      {openUpdateEmployeeForm && (
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-          <div className="bg-white w-full max-w-md rounded-xl shadow-lg p-6 relative">
+          <div className="bg-white w-full max-w-md shadow-lg p-6 relative">
             <button
               onClick={handleClose}
               className="absolute top-3 right-3 text-gray-500 hover:text-black"
@@ -289,39 +301,74 @@ export default function UpdateEmployee() {
                 className="w-full px-4 py-2 border-b-1 outline-none"
                 required
               />
+
+              <input
+                type="text"
+                name="luongCoBan"
+                value={
+                  form.luongCoBan
+                    ? Number(form.luongCoBan).toLocaleString("vi-VN")
+                    : ""
+                }
+                onChange={(e) => {
+                  const raw = e.target.value.replace(/\D/g, "");
+                  setForm({ ...form, luongCoBan: raw });
+                }}
+                placeholder="Lương cơ bản"
+                className="w-full px-4 py-2 border-b-1 outline-none"
+                required
+              />
+
+              <input
+                type="text"
+                name="luongPhuCap"
+                value={
+                  form.luongPhuCap
+                    ? Number(form.luongPhuCap).toLocaleString("vi-VN")
+                    : ""
+                }
+                onChange={(e) => {
+                  const raw = e.target.value.replace(/\D/g, "");
+                  setForm({ ...form, luongPhuCap: raw });
+                }}
+                placeholder="Lương phụ cấp"
+                className="w-full px-4 py-2 border-b-1 outline-none"
+                required
+              />
+
               <select
-                name="roleName"
-                value={form.roleName || 0}
+                name="roleID"
+                value={form.roleID || 0}
                 onChange={(e) =>
                   setForm({
                     ...form,
-                    roleName: e.target.value,
+                    roleID: e.target.value,
                   })
                 }
                 className="w-full border-b-1 p-2 outline-none focus:border-blue-500"
                 required
               >
-                <option value={"none"} disabled>
+                <option value={0} disabled>
                   Chọn vai trò
                 </option>
 
-                <option value={"Support"}>Hỗ trợ</option>
-                <option value={"QA"}>Quản lý chất lượng</option>
-                <option value={"Finance"}>Tài chính</option>
-                <option value={"Admin"}>Admin</option>
+                <option value={3}>Hỗ trợ</option>
+                <option value={4}>Quản lý chất lượng</option>
+                <option value={5}>Tài chính</option>
+                <option value={6}>Admin</option>
               </select>
 
               <div className="flex gap-1 mt-5">
                 <button
                   type="button"
-                  className="w-full bg-[#cf345a] text-white py-2 rounded-lg hover:bg-[#c71c46] transition"
+                  className="w-full bg-[#cf345a] text-white py-2 hover:bg-[#c71c46] transition"
                   onClick={handleClose}
                 >
                   Hủy
                 </button>
                 <button
                   type="submit"
-                  className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition"
+                  className="w-full bg-blue-600 text-white py-2 hover:bg-blue-700 transition"
                 >
                   Cập nhật
                 </button>

@@ -27,7 +27,7 @@ export default function MentorRoadmapSideBar() {
           }
         >
           <BookOpenText size={20} />
-          <span className="font-medium">Tạo lộ trình</span>
+          <span className="font-medium">Chia sẻ lộ trình</span>
         </NavLink>
 
         <NavLink

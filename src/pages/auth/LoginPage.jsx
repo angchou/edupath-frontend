@@ -3,7 +3,11 @@ import { Link, useNavigate } from "react-router-dom";
 import { loginService } from "../../services/authService";
 import { pasteRegex } from "@tiptap/extension-highlight";
 
+import { useToast } from "../../contexts/ToastContext";
+
 export default function LoginPage() {
+  const { addToast } = useToast();
+
   const [form, setForm] = useState({
     email: "",
     password: "",
@@ -29,7 +33,7 @@ export default function LoginPage() {
 
     const payload = buildPayload();
     if (!payload.email || !payload.password) {
-      setError("All fields are required!");
+      addToast("Không được để trống email và mật khẩu", "");
       return;
     }
 
@@ -47,7 +51,11 @@ export default function LoginPage() {
       navigate("/mentor/course/create");
     } else if (roles.includes("Learner")) {
       navigate("/learner/course/all");
+    } else if (roles == "") {
+      addToast("Đăng nhập Thất bại!", "error");
+      return;
     }
+    addToast("Đăng nhập thành công!", "success");
   };
 
   return (
@@ -65,7 +73,6 @@ export default function LoginPage() {
               onChange={handleChange}
               placeholder="Nhập email"
               className="w-full px-4 py-2 border-b-1 outline-none"
-              required
             />
           </div>
 
@@ -78,7 +85,6 @@ export default function LoginPage() {
               onChange={handleChange}
               placeholder="Nhập mật khẩu"
               className="w-full px-4 py-2 border-b-1 outline-none"
-              required
             />
           </div>
 

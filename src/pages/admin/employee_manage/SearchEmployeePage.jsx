@@ -1,16 +1,32 @@
 import SearchBar from "../../../components/SearchBar";
 import { useState, useEffect } from "react";
 
-import { getAllEmployees } from "../../../services/EmployeeService";
-
 import { Eye, X } from "lucide-react";
 import { FaUserCircle, FaCode, FaTag } from "react-icons/fa";
 import { MdEmail } from "react-icons/md";
 import { FaGear } from "react-icons/fa6";
 import { IoCreate } from "react-icons/io5";
+import { getAllEmployees } from "../../../services/EmployeeService";
 
-export default function DeleteEmployee() {
+export default function SearchEmployee() {
   const [employees, setEmployees] = useState([]);
+
+  const getRoleName = (id) => {
+    if (id == 3) {
+      return "Hỗ trợ";
+    } else if (id == 4) {
+      return "Đảm bảo chất lượng";
+    } else if (id == 5) {
+      return "Tài chính";
+    } else return "Quản trị viên";
+  };
+
+  const getStatus = (status) => {
+    if (status == 2) {
+      return "Đang làm việc";
+    }
+    return "Đã nghỉ làm";
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -28,7 +44,6 @@ export default function DeleteEmployee() {
   const [selectedEmployee, setSelectedEmployee] = useState(null);
   const [openModal, setOpenModal] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
-  const [userCode, setUserCode] = useState("");
 
   const filteredEmployees = employees.filter((emp) => {
     const keyword = searchTerm.toLowerCase();
@@ -37,59 +52,28 @@ export default function DeleteEmployee() {
       emp.userID.toLowerCase().includes(keyword) ||
       emp.hoTen.toLowerCase().includes(keyword) ||
       emp.email.toLowerCase().includes(keyword) ||
-      emp.roleName.toLowerCase().includes(keyword)
+      getRoleName(emp.roleID).toLowerCase().includes(keyword) ||
+      getStatus(emp.trangThai).toLowerCase().includes(keyword)
     );
   });
 
-  const handleClose = () => {
-    setSelectedEmployee(null);
-    setOpenModal(false);
-    setUserCode("");
-  };
-
-  const buildPayload = () => {
-    return {
-      userID: selectedEmployee?.userID,
-    };
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-
-    const payload = buildPayload();
-    if (payload.userID !== userCode) {
-      alert("Nhập lại mã nhân viên sai!");
-      return;
-    }
-
-    handleClose();
-
-    console.log(payload);
-  };
-
   return (
-    <div className="flex flex-col bg-gray-50 font-sans">
-      <div className="p-5 flex-1 flex flex-col overflow-hidden">
+    <div className="flex h-[90vh] flex-col font-sans">
+      <div className="flex-1 flex flex-col overflow-hidden">
         <header className="md:h-16 bg-white border-b border-gray-200 flex flex-col md:flex-row md:items-center md:justify-between gap-3 px-4 md:px-8 py-3">
-          <h2 className="text-lg md:text-xl font-semibold text-gray-800">
-            Xóa nhân viên
-          </h2>
+          <p className="text-sm text-gray-500">
+            Tổng cộng {employees.length} nhân viên
+          </p>
+          <SearchBar
+            label="Tìm kiếm nhân viên"
+            value={searchTerm}
+            onChange={(value) => setSearchTerm(value)}
+          />
         </header>
 
-        <main className="flex-1 p-4 md:p-8">
-          <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-3 mb-6">
-            <p className="text-sm text-gray-500">
-              Tổng cộng {employees.length} nhân viên
-            </p>
-            <SearchBar
-              label="Tìm kiếm nhân viên"
-              value={searchTerm}
-              onChange={(value) => setSearchTerm(value)}
-            />
-          </div>
-
-          <div className="h-full bg-white rounded-xl shadow-sm border border-gray-100 overflow-x-auto">
-            <div className="max-h-[50vh] overflow-y-auto">
+        <main className="flex-1 p-4 md:p-2">
+          <div className="h-full bg-white border border-gray-100 overflow-x-auto">
+            <div className="max-h-[85vh] overflow-y-auto">
               <table className="w-full min-w-[700px] text-left">
                 <thead className="bg-gray-50 border-b border-gray-100 sticky top-0 z-10">
                   <tr>
@@ -107,6 +91,9 @@ export default function DeleteEmployee() {
                     </th>
                     <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase">
                       Ngày tạo
+                    </th>
+                    <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase">
+                      Trạng thái
                     </th>
                     <th className="px-6 py-4"></th>
                   </tr>
@@ -134,22 +121,27 @@ export default function DeleteEmployee() {
                         </td>
 
                         <td className="px-6 py-4 text-sm text-gray-600">
-                          {emp.roleName}
+                          {getRoleName(emp.roleID)}
                         </td>
 
                         <td className="px-6 py-4 text-sm text-gray-600">
                           {emp.ngayTao}
                         </td>
 
-                        <td className="px-6 py-4 text-right flex gap-5">
+                        <td className="px-6 py-4 text-sm text-gray-600">
+                          {getStatus(emp.trangThai)}
+                        </td>
+
+                        <td className="px-6 py-4 text-right">
                           <button
-                            className="flex items-center gap-1 text-[#cf345a] hover:text-[#c71c46] hover:scale-110 text-sm font-medium transition"
+                            className="flex items-center gap-1 text-blue-500 hover:text-blue-600 hover:scale-110 text-sm font-medium transition"
                             onClick={() => {
                               setOpenModal(true);
                               setSelectedEmployee(emp);
                             }}
                           >
-                            Xóa nhân viên
+                            <Eye size={16} />
+                            Xem chi tiết
                           </button>
                         </td>
                       </tr>
@@ -173,15 +165,15 @@ export default function DeleteEmployee() {
 
       {openModal && (
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-          <div className="bg-white w-full max-w-md rounded-xl shadow-lg p-6 relative">
+          <div className="bg-white w-full max-w-md shadow-lg p-6 relative">
             <button
-              onClick={handleClose}
+              onClick={() => setOpenModal(false)}
               className="absolute top-3 right-3 text-gray-500 hover:text-black"
             >
               <X size={20} />
             </button>
             <h2 className="text-xl font-semibold mb-5 mt-4">
-              Xem lại thông tin nhân viên
+              Thông tin nhân viên
             </h2>
             <div className="h-full flex flex-col items-center justify-center">
               <FaUserCircle className="size-12" />
@@ -209,41 +201,30 @@ export default function DeleteEmployee() {
                 <div className="flex gap-3">
                   <FaGear size={20} className="mt-1 rotate-5 text-gray-500" />
                   <span className="font-bold">Vai trò:</span>
-                  {selectedEmployee?.roleName}
+                  {getRoleName(selectedEmployee?.roleID)}
                 </div>
                 <div className="flex gap-3">
                   <IoCreate size={20} className="mt-1 -rotate-5" />
                   <span className="font-bold">Ngày tạo tài khoản:</span>
                   {selectedEmployee?.ngayTao}
                 </div>
+                <div className="flex gap-3">
+                  <span className="font-bold">Lương cơ bản:</span>
+                  {selectedEmployee?.luongCoBan.toLocaleString("vi-VN")} đồng
+                </div>
+                <div className="flex gap-3">
+                  <span className="font-bold">Lương phụ cấp:</span>
+                  {selectedEmployee?.luongPhuCap.toLocaleString("vi-VN")} đồng
+                </div>
               </div>
+              <button
+                type="submit"
+                className="w-full py-2 transition mt-5 text-blue-500 border-1 border-blue-500 hover:text-white hover:bg-blue-500 transition"
+                onClick={() => setOpenModal(false)}
+              >
+                Thoát
+              </button>
             </div>
-
-            <form action="" onSubmit={handleSubmit}>
-              <input
-                type="text"
-                placeholder="Nhập lại mã nhân viên để xóa"
-                className="w-full border mt-4 rounded-lg p-2 outline-none focus:border-blue-500"
-                value={userCode}
-                onChange={(e) => setUserCode(e.target.value)}
-                required
-              />
-              <div className="flex gap-1 mt-5">
-                <button
-                  type="button"
-                  className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition"
-                  onClick={handleClose}
-                >
-                  Hủy
-                </button>
-                <button
-                  type="submit"
-                  className="w-full bg-[#cf345a] text-white py-2 rounded-lg hover:bg-[#c71c46] transition"
-                >
-                  Xác nhận xóa
-                </button>
-              </div>
-            </form>
           </div>
         </div>
       )}

@@ -50,20 +50,6 @@ export default function MentorProfileManagementSideBar() {
           <TbDeviceIpadSearch size={20} />
           <span className="font-medium">Tra cứu hồ sơ</span>
         </NavLink>
-
-        <NavLink
-          to="/qa/mentor_profile/del"
-          className={({ isActive }) =>
-            `${baseStyle} ${
-              isActive
-                ? "bg-blue-50 text-blue-600"
-                : "text-gray-600 hover:bg-gray-50"
-            }`
-          }
-        >
-          <Trash2 size={20} />
-          <span className="font-medium">Xóa hồ sơ</span>
-        </NavLink>
       </nav>
     </div>
   );

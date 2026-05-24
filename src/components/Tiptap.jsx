@@ -30,7 +30,7 @@ import { FontFamily } from "@tiptap/extension-text-style";
 import TextAlign from "@tiptap/extension-text-align";
 import { UndoRedo } from "@tiptap/extensions";
 
-export default function Tiptap({ onSave, onClose }) {
+export default function Tiptap({ onSave, onClose, content }) {
   const editor = useEditor({
     extensions: [
       StarterKit,
@@ -46,7 +46,7 @@ export default function Tiptap({ onSave, onClose }) {
         types: ["heading", "paragraph"],
       }),
     ],
-    content: null,
+    content: content,
     editorProps: {
       attributes: {
         class:
@@ -73,9 +73,9 @@ export default function Tiptap({ onSave, onClose }) {
   if (!editor) return null;
 
   return (
-    <div className="relative shadow-lg p-2 font-sans">
+    <div className="relative text-sm shadow-lg p-2 font-sans max-h-[50vh] overflow-y-auto">
       <BubbleMenu editor={editor} tippyOptions={{ duration: 100 }}>
-        <div className="flex gap-1 bg-black text-white rounded-xl p-2 shadow-xl">
+        <div className="flex gap-1 bg-black text-white rounded-xl p-2 shadow-xl z-20 sticky">
           <Heading1
             className="size-6 p-1 hover:bg-blue-500 transition rounded-sm"
             onClick={() => editor.commands.toggleHeading({ level: 1 })}
@@ -123,8 +123,8 @@ export default function Tiptap({ onSave, onClose }) {
         </div>
       </BubbleMenu>
 
-      <div className="control-group">
-        <div className="button-group flex flex-col gap-2 bg-blue-500 text-white p-2 shadow-xl">
+      <div className="control-group sticky top-0 z-10">
+        <div className="button-group flex flex-col gap-1 bg-blue-500 text-white p-2 shadow-xl">
           <div className="flex gap-2">
             <Heading1
               className="size-8 p-1 hover:bg-white hover:text-black transition rounded-sm"
@@ -349,16 +349,16 @@ export default function Tiptap({ onSave, onClose }) {
 
       <EditorContent editor={editor} />
 
-      <div className="flex gap-2 w-full">
+      <div className="flex gap-2 w-full sticky top-0 z-10">
         <button
           onClick={() => onClose()}
-          className="mt-4 px-12 py-2 bg-gray-400 hover:bg-gray-500 text-white rounded-md font-bold transition"
+          className="mt-4 px-12 py-2 bg-gray-400 hover:bg-gray-500 text-white transition"
         >
           Hủy
         </button>
         <button
           onClick={handleSave}
-          className="mt-4 px-12 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-md font-bold transition"
+          className="mt-4 px-12 py-2 bg-blue-500 hover:bg-blue-600 text-white transition"
         >
           Lưu
         </button>

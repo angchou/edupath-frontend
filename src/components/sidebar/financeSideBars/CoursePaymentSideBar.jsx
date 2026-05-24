@@ -1,6 +1,7 @@
 import { MdPayments } from "react-icons/md";
 import { RiRefundFill } from "react-icons/ri";
 import { History, Ticket } from "lucide-react";
+import { GrTransaction } from "react-icons/gr";
 
 import { NavLink } from "react-router-dom";
 
@@ -33,7 +34,7 @@ export default function CoursePaymentSideBar() {
         </NavLink>
 
         <NavLink
-          to="/finance/course_payment/history"
+          to="/finance/course_payment/refund-history"
           className={({ isActive }) =>
             `${baseStyle} ${
               isActive
@@ -47,7 +48,7 @@ export default function CoursePaymentSideBar() {
         </NavLink>
 
         <NavLink
-          to="/finance/course_payment/ticket"
+          to="/finance/course_payment/history"
           className={({ isActive }) =>
             `${baseStyle} ${
               isActive
@@ -56,8 +57,8 @@ export default function CoursePaymentSideBar() {
             }`
           }
         >
-          <Ticket size={20} />
-          <span className="font-medium">Ticket thanh toán</span>
+          <GrTransaction size={20} />
+          <span className="font-medium">Lịch sử giao dịch</span>
         </NavLink>
       </nav>
     </div>

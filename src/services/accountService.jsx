@@ -17,8 +17,6 @@ export const getLearnerProfile = async () => {
   const data = await res.json();
   const roles = jwtDecode(token).roles;
 
-  console.log(roles);
-
   return {
     userID: data.userID,
     hoTen: data.hoTen,
@@ -47,8 +45,6 @@ export const getMentorProfile = async () => {
   const data = await res.json();
   const roles = jwtDecode(token).roles;
 
-  console.log(roles);
-
   return {
     userID: data.userID,
     hoTen: data.hoTen,
@@ -58,4 +54,89 @@ export const getMentorProfile = async () => {
     roles: roles,
     ngayTao: data.ngayTao,
   };
+};
+
+export const getEmployeeProfile = async () => {
+  const token = localStorage.getItem("token");
+
+  const res = await fetch(`${BASE_URL}/api/account/emp/profile`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  if (!res.ok) throw new Error("Failed!");
+
+  const data = await res.json();
+  const roles = jwtDecode(token).roles;
+
+  return {
+    userID: data.userID,
+    hoTen: data.hoTen,
+    email: data.email,
+    chucVu: data.chucVu,
+    roles: roles,
+    luongCoBan: data.luongCoBan,
+    luongPhuCap: data.luongPhuCap,
+    ngayTao: data.ngayTao,
+  };
+};
+
+export const changePassword = async (payload) => {
+  const token = localStorage.getItem("token");
+
+  const res = await fetch(`${BASE_URL}/api/account/password/change`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(payload),
+  });
+
+  if (!res.ok) {
+    return false;
+  }
+
+  return true;
+};
+
+export const changeLearnerProfile = async (payload) => {
+  const token = localStorage.getItem("token");
+
+  const res = await fetch(`${BASE_URL}/api/account/learner/profile/change`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(payload),
+  });
+
+  if (!res.ok) {
+    return false;
+  }
+
+  return true;
+};
+
+export const changeMentorProfile = async (payload) => {
+  const token = localStorage.getItem("token");
+
+  const res = await fetch(`${BASE_URL}/api/account/mentor/profile/change`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(payload),
+  });
+
+  if (!res.ok) {
+    return false;
+  }
+
+  return true;
 };

@@ -6,11 +6,9 @@ export default function SupportReportPage() {
   const [embedUrl, setEmbedUrl] = useState("");
 
   const handleLoadReport = () => {
-    // demo URL Power BI
     setEmbedUrl("https://app.powerbi.com/view?r=YOUR_REPORT_ID");
   };
 
-  // 🔥 In đúng Power BI (mở tab riêng)
   const handlePrint = () => {
     if (!embedUrl) return;
 
@@ -21,8 +19,8 @@ export default function SupportReportPage() {
   };
 
   return (
-    <div className="bg-gray-50 flex justify-center items-start py-10 px-4">
-      <div className="w-full max-w-6xl bg-white rounded-2xl shadow-lg border border-gray-100 p-6 md:p-8">
+    <div className="flex justify-center items-start py-10 px-4">
+      <div className="w-full max-w-6xl bg-white shadow-lg border border-gray-100 p-6 md:p-8">
         <h2 className="text-2xl font-semibold text-gray-800 text-center mb-8">
           Báo cáo hỗ trợ
         </h2>
@@ -44,14 +42,15 @@ export default function SupportReportPage() {
 
           <select className="p-2 border-b-1 outline-none">
             <option value="">Tất cả trạng thái</option>
-            <option value="done">Đã xử lý</option>
-            <option value="processing">Đang xử lý</option>
-            <option value="overdue">Quá hạn</option>
+            <option value="processing">Chờ xử lý</option>
+            <option value="closed">Đã xử lý</option>
+            <option value="rejected">Đã từ chối</option>
+            <option value="expired">Quá hạn</option>
           </select>
 
           <button
             onClick={handleLoadReport}
-            className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-lg transition font-medium"
+            className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 transition font-medium"
           >
             Thống kê
           </button>
@@ -72,7 +71,7 @@ export default function SupportReportPage() {
             <div className="flex justify-center mt-6">
               <button
                 onClick={handlePrint}
-                className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-lg transition"
+                className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 transition"
               >
                 In báo cáo
               </button>

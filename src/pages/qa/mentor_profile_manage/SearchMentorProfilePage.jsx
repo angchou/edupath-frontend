@@ -1,92 +1,108 @@
 import SearchBar from "../../../components/SearchBar";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
-import { Eye, X } from "lucide-react";
-import { FaCode } from "react-icons/fa";
+import { Eye, X, Loader2 } from "lucide-react";
+import { FaUserCircle, FaCode } from "react-icons/fa";
 import { FaFileAlt } from "react-icons/fa";
+import { useToast } from "../../../contexts/ToastContext";
+import { getApplication } from "../../../services/applicationService";
+import { BASE_URL } from "../../../utils/apiConfig";
 
 export default function SearchMentorProfilePage() {
-  const profiles = [
-    {
-      hoSoID: "HS0001",
-      url: "<url pdf>",
-      trangThai: "Đang chờ",
-      ngayTao: "<ngày tạo>",
-      hocVienID: "U0001",
-    },
-    {
-      hoSoID: "HS0002",
-      url: "<url pdf>",
-      trangThai: "Đang chờ",
-      ngayTao: "<ngày tạo>",
-      hocVienID: "U0002",
-    },
-    {
-      hoSoID: "HS0003",
-      url: "<url pdf>",
-      trangThai: "Đang chờ",
-      ngayTao: "<ngày tạo>",
-      hocVienID: "U0003",
-    },
-    {
-      hoSoID: "HS0004",
-      url: "<url pdf>",
-      trangThai: "Đang chờ",
-      ngayTao: "<ngày tạo>",
-      hocVienID: "U0004",
-    },
-    {
-      hoSoID: "HS0005",
-      url: "<url pdf>",
-      trangThai: "đã cấp quyền",
-      ngayTao: "<ngày tạo>",
-      hocVienID: "U0005",
-    },
-    {
-      hoSoID: "HS0006",
-      url: "<url pdf>",
-      trangThai: "Đang chờ",
-      ngayTao: "<ngày tạo>",
-      hocVienID: "U0006",
-    },
-  ];
-
+  const { addToast } = useToast();
+  const [profiles, setProfiles] = useState([]);
   const [selectedProfile, setSelectedProfile] = useState(null);
-  const [openModal, setOpenModal] = useState(false);
+  const [openViewDetail, setOpenViewDetail] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
+  const [isLoadingPdf, setIsLoadingPdf] = useState(false);
+  const [confirmId, setConfirmId] = useState("");
+
+  const fetchApplication = async () => {
+    try {
+      const data1 = await getApplication(0);
+      const data2 = await getApplication(1);
+      const data3 = await getApplication(2);
+      const data4 = await getApplication(3);
+      setProfiles([...data1, ...data2, ...data3, ...data4] || []);
+    } catch (error) {
+      console.error("Lỗi lấy danh sách:", error);
+    }
+  };
+
+  const getApplicationStatus = (status) => {
+    if (status === 0) {
+      return "Đang chờ phê duyệt";
+    } else if (status === 1) {
+      return "Đang chờ cấp quyền";
+    } else if (status === 2) {
+      return "Đã cấp quyền";
+    } else if (status === 3) {
+      return "Bị từ chối";
+    }
+  };
+
+  useEffect(() => {
+    fetchApplication();
+  }, []);
+
+  const handleViewPdfExternal = async (fileUrl) => {
+    if (!fileUrl) return;
+    setIsLoadingPdf(true);
+    const token = localStorage.getItem("token");
+
+    try {
+      const response = await fetch(
+        `${BASE_URL}/api/learner/view-pdf/${fileUrl}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        },
+      );
+
+      if (response.ok) {
+        const blob = await response.blob();
+        const blobUrl = URL.createObjectURL(blob);
+        window.open(blobUrl, "_blank");
+      } else {
+        addToast("Không thể tải file PDF", "error");
+      }
+    } catch (error) {
+      console.error("Lỗi khi mở PDF:", error);
+    } finally {
+      setIsLoadingPdf(false);
+    }
+  };
+
+  const handleOpenCheck = (profile) => {
+    setSelectedProfile(profile);
+    setConfirmId("");
+    setOpenViewDetail(true);
+  };
 
   const filteredEmployees = profiles.filter((profile) => {
     const keyword = searchTerm.toLowerCase();
-
     return (
       profile.hoSoID.toLowerCase().includes(keyword) ||
-      profile.hocVienID.toLowerCase().includes(keyword) ||
-      profile.trangThai.toLowerCase().includes(keyword)
+      profile.userID?.toLowerCase().includes(keyword) ||
+      getApplicationStatus(profile.trangThai).toLowerCase().includes(keyword)
     );
   });
 
   return (
-    <div className="flex flex-col bg-gray-50 font-sans">
-      <div className="p-5 flex-1 flex flex-col overflow-hidden">
+    <div className="flex h-[90vh] flex-col font-sans">
+      <div className="flex-1 flex flex-col overflow-hidden">
         <header className="md:h-16 bg-white border-b border-gray-200 flex flex-col md:flex-row md:items-center md:justify-between gap-3 px-4 md:px-8 py-3">
-          <h2 className="text-lg md:text-xl font-semibold text-gray-800">
-            Tra cứu hồ sơ đăng ký làm người hướng dẫn
-          </h2>
+          <p className="text-sm text-gray-500">
+            Tổng cộng {profiles.length} hồ sơ
+          </p>
+          <SearchBar
+            label="Tìm kiếm hồ sơ"
+            value={searchTerm}
+            onChange={(value) => setSearchTerm(value)}
+          />
         </header>
 
-        <main className="flex-1 p-4 md:p-8">
-          <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-3 mb-6">
-            <p className="text-sm text-gray-500">
-              Tổng cộng {profiles.length} hồ sơ đăng ký
-            </p>
-            <SearchBar
-              label="Tìm kiếm hồ sơ"
-              value={searchTerm}
-              onChange={(value) => setSearchTerm(value)}
-            />
-          </div>
-
-          <div className="h-full bg-white rounded-xl shadow-sm border border-gray-100 overflow-x-auto">
+        <main className="flex-1 p-4 md:p-2">
+          <div className="overflow-x-auto border border-gray-100">
             <div className="max-h-[50vh] overflow-y-auto">
               <table className="w-full min-w-[700px] text-left">
                 <thead className="bg-gray-50 border-b border-gray-100 sticky top-0 z-10">
@@ -98,12 +114,12 @@ export default function SearchMentorProfilePage() {
                       Mã học viên
                     </th>
                     <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase">
-                      ngày tạo
+                      Ngày tạo
                     </th>
                     <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase">
-                      trạng thái
+                      Trạng thái
                     </th>
-                    <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase">
+                    <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase text-center">
                       Hồ sơ
                     </th>
                     <th className="px-6 py-4"></th>
@@ -120,38 +136,33 @@ export default function SearchMentorProfilePage() {
                         <td className="px-6 py-4 text-sm font-medium text-gray-900">
                           {profile.hoSoID}
                         </td>
-
-                        <td className="px-6 py-4">
-                          <div className="font-medium text-gray-900">
-                            {profile.hocVienID}
-                          </div>
+                        <td className="px-6 py-4 font-medium text-gray-900">
+                          {profile.userID}
                         </td>
-
                         <td className="px-6 py-4 text-sm text-gray-600">
                           {profile.ngayTao}
                         </td>
-
                         <td className="px-6 py-4 text-sm text-gray-600">
-                          {profile.trangThai}
+                          {getApplicationStatus(profile.trangThai)}
                         </td>
-
-                        <td className="px-6 py-4 text-sm text-gray-600">
-                          <FaFileAlt
-                            size={25}
-                            className="ml-2 hover:text-blue-500 hover:rotate-10 transition"
-                          />
+                        <td className="px-6 py-4 text-sm text-gray-600 text-center">
+                          <button
+                            disabled={isLoadingPdf}
+                            onClick={() => handleViewPdfExternal(profile.url)}
+                            className="disabled:opacity-50"
+                          >
+                            <FaFileAlt
+                              size={25}
+                              className="mx-auto hover:text-blue-500 transition cursor-pointer"
+                            />
+                          </button>
                         </td>
-
                         <td className="px-6 py-4 text-right">
                           <button
-                            className="flex items-center gap-1 text-blue-500 hover:text-blue-600 hover:scale-110 text-sm font-medium transition"
-                            onClick={() => {
-                              setOpenModal(true);
-                              setSelectedProfile(profile);
-                            }}
+                            onClick={() => handleOpenCheck(profile)}
+                            className="flex items-center gap-1 text-blue-500 hover:text-blue-60 hover:scale-105 text-sm font-medium transition"
                           >
-                            <Eye size={16} />
-                            Kiểm tra
+                            Xem chi tiết
                           </button>
                         </td>
                       </tr>
@@ -162,7 +173,7 @@ export default function SearchMentorProfilePage() {
                         colSpan={6}
                         className="text-center py-10 text-gray-400 italic"
                       >
-                        Không tìm thấy nhân viên
+                        Không tìm thấy hồ sơ
                       </td>
                     </tr>
                   )}
@@ -172,47 +183,52 @@ export default function SearchMentorProfilePage() {
           </div>
         </main>
       </div>
-
-      {openModal && (
-        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-          <div className="bg-white w-full max-w-md rounded-xl shadow-lg p-6 relative">
+      {openViewDetail && (
+        <div className="fixed inset-0 bg-black/30 bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white w-full max-w-md rounded shadow-md p-6 relative text-gray-800">
             <button
-              onClick={() => setOpenModal(false)}
-              className="absolute top-3 right-3 text-gray-500 hover:text-black"
+              onClick={() => setOpenViewDetail(false)}
+              className="absolute top-4 right-4 text-gray-400 hover:text-black"
             >
               <X size={20} />
             </button>
-            <h2 className="text-xl font-semibold mb-5 mt-4">Duyệt hồ sơ</h2>
-            <div className="h-full flex flex-col items-center justify-center">
-              <FaFileAlt className="size-12" />
-              <div className="mt-5 w-full flex flex-col gap-2">
-                <div className="flex gap-3">
-                  <FaCode size={20} className="mt-1 text-yellow-500" />
-                  <span className="font-bold">Mã hồ sơ:</span>
-                  {selectedProfile?.hoSoID}
-                </div>
-                <div className="flex gap-3">
-                  <FaCode size={20} className="mt-1 text-red-500" />
-                  <span className="font-bold">Mã học viên tạo hồ sơ:</span>
-                  {selectedProfile?.hocVienID}
-                </div>
-                <div className="flex gap-3">
-                  <span className="font-bold">Ngày tạo:</span>
-                  {selectedProfile?.ngayTao}
-                </div>
-                <div className="flex gap-3">
-                  <span className="font-bold">Trạng thái hồ sơ:</span>
-                  {selectedProfile?.trangThai}
-                </div>
+
+            <h2 className="text-lg font-bold mb-4">Duyệt hồ sơ</h2>
+
+            <div className="space-y-2  pb-4">
+              <div className="flex gap-2">
+                <span className="font-semibold w-28">Mã hồ sơ:</span>
+                <span>{selectedProfile?.hoSoID}</span>
+              </div>
+              <div className="flex gap-2">
+                <span className="font-semibold w-28">Người tạo:</span>
+                <span>
+                  {selectedProfile?.userID} - {selectedProfile?.hoTen}
+                </span>
+              </div>
+              <div className="flex gap-2">
+                <span className="font-semibold w-28">Email:</span>
+                <span>{selectedProfile?.email}</span>
+              </div>
+              <div className="flex gap-2">
+                <span className="font-semibold w-28">Ngày tạo:</span>
+                <span>{selectedProfile?.ngayTao}</span>
               </div>
             </div>
-            <button
-              type="button"
-              className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition mt-5"
-              onClick={() => setOpenModal(false)}
-            >
-              Thoát
-            </button>
+
+            <div className="mt-4">
+              <div className="flex gap-2 mt-6">
+                <button
+                  onClick={() => {
+                    handleOpenCheck(false);
+                    setOpenViewDetail(false);
+                  }}
+                  className="flex-1 bg-blue-600 text-white py-2 hover:bg-blue-700 transition font-medium"
+                >
+                  Thoát
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       )}
