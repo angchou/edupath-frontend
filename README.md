@@ -20,7 +20,7 @@ Mở thư mục dự án **EduPath**, truy cập sâu vào thư mục gốc tên
 ### **Bước 2: Mở Terminal**
 
 Mở một cửa sổ Terminal (với đường dẫn đang đứng tại thư mục `edupath-frontend-1` vừa mở).
-![Mở Terminal tại thư mục gốc](image.png)
+(![Mở Terminal tại thư mục gốc](image.png))
 
 ### **Bước 3: Cài đặt các thư viện phụ thuộc (Dependencies)**
 
@@ -28,4 +28,10 @@ Tại cửa sổ Terminal, gõ lệnh sau và nhấn `Enter`:
 
 ```bash
 npm install
+```
+
+Sau khi cài đặt xong các thư viện, gõ lệnh sau và nhấn `Enter`
+
+```bash
+npm run dev
 ```
