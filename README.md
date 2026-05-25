@@ -1,16 +1,31 @@
-# React + Vite
+# Hướng Dẫn Cài Đặt Frontend (EduPath)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Tài liệu này hướng dẫn cách thiết lập và chạy dự án Frontend EduPath ở môi trường local.
 
-Currently, two official plugins are available:
+## Công cụ yêu cầu
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+Trước khi bắt đầu, hãy đảm bảo máy tính của bạn đã cài đặt các công cụ sau:
 
-## React Compiler
+- **Visual Studio Code** (hoặc một IDE code bất kỳ)
+- **Node.js** (Khuyến nghị bản LTS) -> [Tải Node.js tại đây](https://nodejs.org/en/download)
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+---
 
-## Expanding the ESLint configuration
+## Các bước tiến hành
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+### **Bước 1: Mở dự án**
+
+Mở thư mục dự án **EduPath**, truy cập sâu vào thư mục gốc tên là `edupath-frontend-1`.
+
+### **Bước 2: Mở Terminal**
+
+Mở một cửa sổ Terminal (với đường dẫn đang đứng tại thư mục `edupath-frontend-1` vừa mở).
+![Mở Terminal tại thư mục gốc](image.png)
+
+### **Bước 3: Cài đặt các thư viện phụ thuộc (Dependencies)**
+
+Tại cửa sổ Terminal, gõ lệnh sau và nhấn `Enter`:
+
+```bash
+npm install
+```
