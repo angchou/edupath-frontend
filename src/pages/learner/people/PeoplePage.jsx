@@ -108,7 +108,7 @@ export default function PeoplePage() {
 
         <main className="flex-1 p-4 md:p-2">
           <div className="h-full bg-white border border-gray-100 overflow-x-auto">
-            <div className="max-h-[50vh] overflow-y-auto">
+            <div className="h-[90vh] overflow-y-auto">
               <table className="w-full min-w-[700px] text-left">
                 <thead className="bg-gray-50 border-b border-gray-100 sticky top-0 z-10">
                   <tr>

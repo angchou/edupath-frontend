@@ -150,7 +150,7 @@ export default function PayrollPage() {
   return (
     <div className="h-[90vh] p-2 font-sans">
       <div className="grid grid-cols-1 xl:grid-cols-4 gap-3">
-        <div className="xl:col-span-3 bg-white p-2 border border-gray-100 flex flex-col">
+        <div className="h-[90vh] xl:col-span-3 bg-white p-2 border border-gray-100 flex flex-col">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
             <h2 className="text-lg font-semibold text-gray-700 flex items-center gap-2 ml-3 mt-1">
               <Users size={18} className="text-blue-500" /> Nhân viên đang hoạt

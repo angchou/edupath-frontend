@@ -14,7 +14,7 @@ export default function CourseCard({ course }) {
   return (
     <div
       key={course.khoaHocID}
-      className="flex flex-col bg-white shadow hover:shadow-lg transition overflow-hidden"
+      className="flex h-full flex-col bg-white shadow hover:shadow-lg transition overflow-hidden"
     >
       <div className="overflow-hidden">
         <SecureImage
@@ -23,7 +23,7 @@ export default function CourseCard({ course }) {
         />
       </div>
 
-      <div className="flex flex-col justify-center p-6">
+      <div className="flex flex-col flex-1 p-6">
         <h2 className="font-bold text-lg mb-2">{course.tenKH}</h2>
 
         <p className="line-clamp-2">
@@ -52,7 +52,7 @@ export default function CourseCard({ course }) {
             {getCourseStatus(course.tinhTrang)}
           </div>
         </div>
-        <div className="flex gap-3 mt-5">
+        <div className="flex gap-3 mt-auto pt-5">
           <div className="group w-full">
             <button
               className="cursor-pointer w-full text-center p-2 font-semibold transition border-1 group-hover:text-white text-blue-500 group-hover:bg-blue-500"

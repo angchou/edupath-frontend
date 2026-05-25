@@ -59,16 +59,16 @@ export default function LearnerCoursePage() {
             {courses.map((course) => (
               <div
                 key={course.khoaHocID}
-                className="flex flex-col bg-white text-sm shadow hover:shadow-lg transition overflow-hidden"
+                className="flex flex-col h-full bg-white text-sm shadow hover:shadow-lg transition overflow-hidden"
               >
-                <div className="overflow-hidden">
+                <div className="overflow-hidden shrink-0">
                   <SecureImage
                     src={course.hinhAnh}
                     className="w-full h-48 object-cover hover:scale-110 transition duration-450"
                   />
                 </div>
 
-                <div className="flex flex-col justify-center p-6">
+                <div className="flex flex-col flex-1 p-6">
                   <h2 className="font-bold text-lg mb-2">{course.tenKH}</h2>
 
                   <p className="line-clamp-2">
@@ -100,7 +100,8 @@ export default function LearnerCoursePage() {
                     <b>Số lượng học viên: </b>
                     {course.slhvHienTai} / {course.slhv} học viên
                   </p>
-                  <div className="flex gap-3 mt-5">
+
+                  <div className="flex gap-3 mt-auto pt-5">
                     <div className="group w-full">
                       <button
                         className="cursor-pointer w-full text-center p-2 font-semibold transition border-1 group-hover:text-white text-blue-500 group-hover:bg-blue-500"
