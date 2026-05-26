@@ -8,7 +8,6 @@ export default function SupportNavigationBar() {
       label: "Quản lý yêu cầu hỗ trợ",
       path: "/support/ticket",
     },
-    { id: "customer", label: "Báo cáo hỗ trợ", path: "/support/report/rpt" },
   ];
 
   return (
