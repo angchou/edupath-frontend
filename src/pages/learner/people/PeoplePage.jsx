@@ -81,7 +81,7 @@ export default function PeoplePage() {
     handleClose();
   };
 
-  const filteredEmployees = customers.filter((cus) => {
+  const filteredCustomers = customers.filter((cus) => {
     const keyword = searchTerm.toLowerCase();
 
     return (
@@ -135,8 +135,8 @@ export default function PeoplePage() {
                 </thead>
 
                 <tbody className="divide-y divide-gray-50">
-                  {filteredEmployees.length > 0 ? (
-                    filteredEmployees.map((cus) => (
+                  {filteredCustomers.length > 0 ? (
+                    filteredCustomers.map((cus) => (
                       <tr
                         key={cus.userID}
                         className="hover:bg-blue-50/30 transition-colors"
