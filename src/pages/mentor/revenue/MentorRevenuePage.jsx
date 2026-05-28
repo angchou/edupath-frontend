@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import {
   Wallet,
   ArrowUpRight,
@@ -10,6 +10,7 @@ import {
   FileText,
   X,
   Landmark,
+  HandCoins,
 } from "lucide-react";
 
 import {
@@ -21,6 +22,8 @@ import { getMyBankAccounts } from "../../../services/bankAccountService";
 import { useToast } from "../../../contexts/ToastContext";
 
 export default function MentorRevenuePage() {
+  const hasFetched = useRef(false);
+
   const { addToast } = useToast();
   const [bankAccounts, setBankAccounts] = useState([]);
   const [withdrawals, setWithdrawals] = useState([]);
@@ -28,6 +31,7 @@ export default function MentorRevenuePage() {
   const [tongDoanhThu, setTongDoanhThu] = useState(0);
   const [daRutThanhCong, setDaRutThanhCong] = useState(0);
   const [soDuKhaDung, setSoDuKhaDung] = useState(0);
+  const [tongPhiSan, setTongPhiSan] = useState(0);
 
   const [openCreateModal, setOpenCreateModal] = useState(false);
   const [formRutTien, setFormRutTien] = useState({
@@ -37,6 +41,8 @@ export default function MentorRevenuePage() {
 
   const fetchRevenue = async () => {
     const data = await getMentorRevenue();
+    console.log(data);
+    setTongPhiSan(data.tongPhiSan);
     setTongDoanhThu(data.tongDoanhThu);
     setDaRutThanhCong(data.daRutThanhCong);
     setSoDuKhaDung(data.soDuKhaDung);
@@ -52,6 +58,9 @@ export default function MentorRevenuePage() {
   };
 
   useEffect(() => {
+    if (hasFetched.current) return;
+    hasFetched.current = true;
+
     fetchRevenue();
   }, []);
 
@@ -141,17 +150,31 @@ export default function MentorRevenuePage() {
         </div>
 
         {/* Thống kê (Dashboard Cards) */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-2">
           <div className="bg-white px-5 py-3 shadow-sm border border-gray-100 flex items-center gap-5">
             <div className="bg-blue-50 p-2 rounded-full text-blue-600">
               <Wallet size={28} />
             </div>
             <div>
               <p className="text-sm text-gray-500 font-medium mb-1">
-                Tổng doanh thu
+                Tổng lợi nhuận
               </p>
               <p className="text-xl font-bold text-gray-800">
                 {formatCurrency(tongDoanhThu)}
+              </p>
+            </div>
+          </div>
+
+          <div className="bg-white px-5 py-3 shadow-sm border border-gray-100 flex items-center gap-5">
+            <div className="bg-blue-50 p-2 rounded-full text-blue-600">
+              <HandCoins size={28} />
+            </div>
+            <div>
+              <p className="text-sm text-gray-500 font-medium mb-1">
+                Tổng phí sàn
+              </p>
+              <p className="text-xl font-bold text-gray-800">
+                {formatCurrency(tongPhiSan)}
               </p>
             </div>
           </div>
@@ -161,9 +184,7 @@ export default function MentorRevenuePage() {
               <ArrowUpRight size={28} />
             </div>
             <div>
-              <p className="text-sm text-gray-500 font-medium mb-1">
-                Đã rút thành công
-              </p>
+              <p className="text-sm text-gray-500 font-medium mb-1">Đã rút</p>
               <p className="text-xl font-bold text-gray-800">
                 {formatCurrency(daRutThanhCong)}
               </p>

@@ -127,6 +127,7 @@ export const getMentorRevenue = async () => {
   }
   const data = await res.json();
   return {
+    tongPhiSan: data.tongPhiSan,
     tongDoanhThu: data.tongDoanhThu,
     daRutThanhCong: data.daRutThanhCong,
     soDuKhaDung: data.soDuKhaDung,

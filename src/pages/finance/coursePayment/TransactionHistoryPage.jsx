@@ -53,15 +53,15 @@ export default function TransactionHistoryPage() {
 
   return (
     <div className="flex h-[90vh] flex-col font-sans">
-      <div className="flex-1 flex flex-col overflow-hidden">
+      <div className="flex-1 flex flex-col overflow-hidden min-h-0">
         <header className="md:h-16 bg-white border-b border-gray-200 flex flex-col md:flex-row md:items-center md:justify-between gap-3 px-4 md:px-8 py-3">
           <p className="text-sm text-gray-500">
             Bạn có tổng cộng {transactions.length} giao dịch
           </p>
         </header>
 
-        <main className="flex-1 p-4 md:p-2">
-          <div className="h-full bg-white border border-gray-100 overflow-x-auto">
+        <main className="flex-1 p-4 md:p-2 min-h-0">
+          <div className="h-full bg-white border border-gray-100 overflow-y-auto">
             <div className="overflow-y-auto">
               <table className="w-full min-w-[700px] text-left">
                 <thead className="bg-gray-50 border-b border-gray-100 sticky top-0 z-10">

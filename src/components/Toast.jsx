@@ -12,7 +12,7 @@ function Toast({ message, type = "info", onClose }) {
   useEffect(() => {
     const timer = setTimeout(() => {
       handleClose();
-    }, 3000);
+    }, 10000);
 
     return () => clearTimeout(timer);
   }, []);
